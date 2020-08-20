@@ -21,4 +21,4 @@ class Scraper_chantier_qc_ca(alt_job.scrapers.Scraper):
         job_dict['description']=BeautifulSoup(response.xpath('//*[contains(@id,"single-post")]').get()).get_text()
         job_dict['organisation']=response.xpath('//*[contains(@id,"single-post")]/div[3]/strong[1]/text()').get()
         job_dict['date_posted']=response.xpath('//*[contains(@id,"single-post")]/div[1]/text()').get()
-        return self.check_regex(Job(job_dict))
+        return Job(job_dict)

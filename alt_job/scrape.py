@@ -23,7 +23,10 @@ def scrape(website, scraper_config, log_level, scraped_data_result, db=None):
             "LOG_LEVEL":log_level,
             "DOWNLOAD_DELAY":3,
             "COOKIES_ENABLED":False,
-            "SPIDER_MODULES":"alt_job.scrapers"
+            "SPIDER_MODULES":"alt_job.scrapers",
+            "ITEM_PIPELINES": {
+                'alt_job.pipelines.AddKeywordMatchesPipeline': 100
+            }
         })
 
         process.crawl(website, **scraper_config, db=db)

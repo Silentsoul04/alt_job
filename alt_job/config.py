@@ -3,7 +3,7 @@ import collections
 import os
 import json
 import copy
-from . import parse_timedelta
+from . import parse_timedelta, log
 
 # Configuration handling -------------------------------------------------------
 class JobsConfig(collections.UserDict):
@@ -26,7 +26,7 @@ class JobsConfig(collections.UserDict):
             if not self.files:
                 self.files=find_config_files()
                 if not self.files:
-                    print("Could not find default config: `~/.alt_job/alt_job.conf`, `~/alt_job.conf` or `./alt_job.conf`")
+                    log.info("Could not find default config: `~/.alt_job/alt_job.conf`, `~/alt_job.conf` or `./alt_job.conf`")
             else:
                 for f in self.files:
                     try :
@@ -37,11 +37,11 @@ class JobsConfig(collections.UserDict):
         
         self.data=copy.deepcopy(self.parser._sections)
 
-        # casting booleans and json data sctructure
+        # casting int, booleans and json data sctructure
         for scraper in self.data:
             for config_option in self.data[scraper]:
                 # List of booleans config values
-                if config_option in ['attach_jobs_description', 'use_google_cache', 'smtptls', 'parse_full_job_page']:
+                if config_option in ['use_google_cache', 'smtptls', 'parse_full_job_page', 'turn_listing_pages', 'attach_jobs_description']:
                     self.data[scraper][config_option]=getbool(self.parser, scraper, config_option)
                 # list of json config values
                 if config_option in ['mailto']:
@@ -49,7 +49,6 @@ class JobsConfig(collections.UserDict):
                 # List of integer config values
                 if config_option in ['smtpport']:
                     self.data[scraper][config_option]=getint(self.parser, scraper, config_option)
-    
     
 def getjson(conf, section, key):
     '''Return json loaded structure from a configparser object. Empty list if the loaded value is null.   
@@ -93,7 +92,6 @@ TEMPLATE_FILE="""[alt_job]
 log_level=INFO
 scrapy_log_level=WARNING
 # jobs_datafile=
-# regex_keyword_matches=[] # WIP
 
 [mail_sender]
 # Email server settings
@@ -106,32 +104,39 @@ smtptls=Yes
 
 # Email notif settings
 mailto=["user@gmail.com"]
+attach_jobs_description=No
 
 #### Scrapers 
 
 [arrondissement.com]
 url=https://www.arrondissement.com/tout-list-emplois/
 parse_full_job_page=False
+turn_listing_pages=False
 
 [cdeacf.ca]
 url=http://cdeacf.ca/recherches?f[0]=type:offre_demploi
 parse_full_job_page=False
+turn_listing_pages=False
 
 [chantier.qc.ca]
 url=https://chantier.qc.ca/decouvrez-leconomie-sociale/offres-demploi
 parse_full_job_page=False
+turn_listing_pages=False
 
 [charityvillage.com]
 url=
 parse_full_job_page=False
+turn_listing_pages=False
 
 [engages.ca]
 url=
 parse_full_job_page=False
+turn_listing_pages=False
 
 [goodwork.ca]
 url=https://www.goodwork.ca/jobs.php?prov=QC
 parse_full_job_page=False
+turn_listing_pages=False
 
 [enviroemplois.org]
 url=

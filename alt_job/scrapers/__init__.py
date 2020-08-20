@@ -27,16 +27,13 @@ class Scraper(abc.ABC, scrapy.Spider):
             url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(self.url)
         yield scrapy.Request(url, callback=self.parse )
 
-    def __init__(self, url, regex=None, parse_full_job_page=False, use_google_cache=False, db=None):
+    def __init__(self, url, regex=None, parse_full_job_page=False, use_google_cache=False, db=None, turn_listing_pages=False):
         self.url=url
         self.regex=regex
         self.call_parse_full_job_page=parse_full_job_page
         self.use_google_cache=use_google_cache
         self.db=db
-    
-    def check_regex(self, job):
-        job['regex_matched']=self.regex if re.search(self.regex, job.get_text()) else False
-        return job
+        self.turn_listing_pages=turn_listing_pages
 
     def parse(self, response):
         """
@@ -44,7 +41,7 @@ class Scraper(abc.ABC, scrapy.Spider):
         Return a generator iterable for parsed jobs (Job objects).  
         This method is called automatically by scrapy buring the scrape process.  
         """
-
+        page_jobs=[]
         for div in self.get_jobs_list(response):
             # At least url, title data is loaded from the list of job posting ...
             job_dict=self.get_job_dict(div)
@@ -52,6 +49,7 @@ class Scraper(abc.ABC, scrapy.Spider):
                 raise ValueError("Could not find valid job information ('url' and 'title') in data:\n"+str(div.get())+"\nScraped infos:\n"+str(job_dict)+"\nReport this issue on github!")
             # Store source as the name of the spider aka website
             job_dict['source']=self.name
+            page_jobs.append(job_dict)
             # Load job page only if:
             # it's a new job (not in database)
             # and parse_full_job_page=Yes
@@ -64,7 +62,15 @@ class Scraper(abc.ABC, scrapy.Spider):
                     callback=self.parse_full_job_page, # Parse all other data (optionnal)
                     cb_kwargs=dict(job_dict=job_dict))
             else:
-                yield self.check_regex(Job(job_dict))
+                yield Job(job_dict)
+        
+        # If all page jobs are new and 
+        # The method get_next_page_url() has been re-wrote by the Scraper subclass
+        # Scrape next page
+        if ( self.turn_listing_pages==True 
+            and not any([self.db.find_job(job_dict)!=None for job_dict in page_jobs]) 
+            and type(self).get_next_page_url != Scraper.get_next_page_url) :
+            yield response.follow(self.get_next_page_url(response), callback=self.parse)
     
     @abc.abstractmethod
     def get_jobs_list(self, response):
@@ -72,7 +78,7 @@ class Scraper(abc.ABC, scrapy.Spider):
         Scrapers must re write this method.  
 
         Arguments:  
-        - response: scrapy response object from the listing page
+        - response: scrapy response object for the listing page
         
         Must return a SelectorList.  
         The result will be automatically iterated in `Scraper.parse()` method.  
@@ -96,7 +102,7 @@ class Scraper(abc.ABC, scrapy.Spider):
 
     def parse_full_job_page(self, response, job_dict):
         """
-        Scrapers can re write this method. Default will simply `return self.check_regex(Job(job_dict))`.
+        Scrapers can re write this method. 
         This method must be re-wrote to use Scraper(parse_full_job_page=True)
 
         Arguments:  
@@ -109,4 +115,17 @@ class Scraper(abc.ABC, scrapy.Spider):
         Must return a Job()  
 
         """
-        return self.check_regex(Job(job_dict))
+        return Job(job_dict)
+
+    def get_next_page_url(self, response):
+        """
+        Scrapers can re write this method. 
+        This method must be re-wrote to use Scraper(turn_listing_pages=True)
+
+        Arguments:  
+        - response: scrapy response object for the listing page
+
+        This method is called by `Scraper.parse()` method if turn_listing_pages==True  
+        Must return a URL string  
+        """
+        return None

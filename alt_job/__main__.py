@@ -76,7 +76,8 @@ class AlternativeJob(object):
                 scraped_data_result=scraped_data_result))
         process.start()
         process.join()
-        return list(scraped_data_result)
+        scraped_data_result=list(scraped_data_result)
+        return scraped_data_result
 
     @staticmethod
     def parse_args():

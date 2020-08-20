@@ -21,4 +21,4 @@ class Scraper_arrondissement_com(alt_job.scrapers.Scraper):
 
     def parse_full_job_page(self, response, job_dict):
         job_dict['description']=BeautifulSoup(response.xpath('//div[@id="fiche"]/div[@class="publication"]').get()).get_text()
-        return self.check_regex(Job(job_dict))
+        return Job(job_dict)

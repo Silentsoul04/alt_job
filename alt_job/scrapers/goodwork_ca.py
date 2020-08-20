@@ -23,7 +23,7 @@ class Scraper_goodwork_ca(alt_job.scrapers.Scraper):
         job_dict['organisation']=response.xpath('//*[@id="page"]/div[1]/div[1]/p[1]/a/text()').get()
         job_dict['location']=response.xpath('//*[@id="page"]/div[1]/div[1]/p[1]/text()[3]').get()
         job_dict['date_posted']=response.xpath('//*[@id="page"]/div[2]/p[2]/small/text()').get().split('Date posted:', 1)[1].split('\n',1)[0]
-        return self.check_regex(Job(job_dict))
+        return Job(job_dict)
 
     # TODO parse search form: http://fr.goodwork.ca/search
     # Add theme, province, city/town(s), country, job type, other options, keyword 

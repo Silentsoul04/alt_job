@@ -14,6 +14,9 @@ import os
 
 # Global log handler
 log = logging.getLogger('alt_job')
+
+# Utility methods
+
 def init_log(verb_level, logfile=None, nostd=False):
     format_string='%(asctime)s [alt_job] %(levelname)s: %(message)s'
     # Add stdout: configurable
@@ -30,8 +33,6 @@ def init_log(verb_level, logfile=None, nostd=False):
         fh.setFormatter(logging.Formatter(format_string))
         log.addHandler(fh)
     return (log)
-
-# Utility methods
 
 def parse_timedelta(time_str):
     """
