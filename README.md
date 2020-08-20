@@ -10,7 +10,7 @@ This project is under construction!
 
 🚧🚧🚧
 
-Focused on Canada/Québec for no, please contribute to expand the scope :)
+Focused on Canada/Québec for now, please contribute to expand the scope :)
 
 Look the following websites: 
 - [arrondissement.com](https://www.arrondissement.com/montreal-list-emplois/t1/pc1/): Québec  
