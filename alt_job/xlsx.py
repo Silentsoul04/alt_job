@@ -9,13 +9,17 @@ def get_xlsx_file(items: list):
     """
     with tempfile.NamedTemporaryFile() as excel_file:
         with xlsxwriter.Workbook(excel_file.name) as workbook:
-            headers={ key:key.title() for key in Job.fields }
+            headers={ 
+                key:key.title() for key in Job().keys() 
+            }
             worksheet = workbook.add_worksheet()
             worksheet.write_row(row=0, col=0, data=headers.values())
             header_keys = list(headers.keys())
+            cell_format = workbook.add_format()
             for index, item in enumerate(items):
                 row = map(lambda field_id: str(item.get(field_id, '')), header_keys)
                 worksheet.write_row(row=index + 1, col=0, data=row)
+                worksheet.set_row(row=index + 1, height=12.75, cell_format=cell_format)
         
         with open(excel_file.name, 'rb') as file:
             return file.read()

@@ -11,6 +11,7 @@ import time
 from datetime import datetime
 import io
 import scrapy.mail
+import datetime
 from alt_job import get_valid_filename
 from alt_job import log
 from alt_job.jobs import Job
@@ -36,9 +37,10 @@ class NewJobsMailSender():
 
     def send_mail_alert(self, jobs):
         '''Sending the report'''
+        date = datetime.datetime.now().isoformat(timespec='minute')
         # Building message
         message = MIMEMultipart("html")
-        message['Subject'] = 'Alt Job Alert: New jobs posting'
+        message['Subject'] = 'New job postings - {}'.format(date)
         message['From'] = self.mailfrom
         message['To'] = ','.join(self.mailto)
         body = self.build_message(jobs)
@@ -54,8 +56,8 @@ class NewJobsMailSender():
                 message.attach(attachment)
 
         # Attach excel file
-        attachment=MIMEApplication(get_xlsx_file(items=jobs), Name='summary.xlsx')
-        attachment.add_header("Content-Disposition", "attachment; filename=summary.xlsx")
+        attachment=MIMEApplication(get_xlsx_file(items=jobs), Name=get_valid_filename(message['Subject'])+'.xlsx')
+        attachment.add_header("Content-Disposition", "attachment; filename={}".format(get_valid_filename(message['Subject'])+'.xlsx'))
         message.attach(attachment)
 
         server=smtplib.SMTP(host=self.smtphost, port=self.smtpport)
@@ -71,28 +73,33 @@ class NewJobsMailSender():
 
     def build_message(self, jobs):
         '''Build mail message text base on jobs'''
-        
-        message="<h3>Alt jobs alert: {} new jobs posting</h3>\n".format(len(jobs))
+        message=''
+        message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hello,</p>'
+        message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;"><b>{} new job postings have been found.</b><br />You can review the jobs from this email or download the attached Excel file with extra data.</p>'.format(len(jobs))
+                        
         all_sources=set([j['source'] for j in jobs])
         for src in all_sources:
-            message += "<br /><h4>Posting from {}</h4>\n".format(src)
-            for job in [j for j in jobs if j['source']==src]:
-                message+="""<a href="{url}">{title}</a> | """.format(
+            src_posting=[j for j in jobs if j['source']==src]
+            message += "<h4>{} job postings from {}</h4>".format(len(src_posting), src)
+            message += '<details><summary style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">See list</summary><p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">'
+            for job in src_posting:
+                message+="""<a href="{url}">{title}</a>{org} | """.format(
                     title=job['title'],
-                    url=job['url']
+                    url=job['url'],
+                    org='' if not job['organisation'] else ' ({})'.format(job['organisation'])
                 )
+            message += "</p></details>"
 
-        message += "\n<br />\n<br />--"
-        message += "\n<br />This is an automated message"
-        message += '\n<br />Alt Job is an <a href="https://github.com/tristanlatr/alt_job">open source software</a>\n<br />'
-        
+        message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Good luck!</p>'
+
+        message = self.TEMPLATE_BEGIN+message+self.TEMPLATE_END
         log.info('MAIL MESSAGE :\n'+message)
         return message
 
 
 #TODO ADJUST FOR ALT_JOP SCRAPER
 
-    TEMPLATE="""
+    TEMPLATE_BEGIN="""
 <!doctype html>
 <html>
   <head>
@@ -206,25 +213,8 @@ class NewJobsMailSender():
                   <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                     <tr>
                       <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hi there,</p>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.</p>
-                        <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;">
-                          <tbody>
-                            <tr>
-                              <td align="left" style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;">
-                                <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
-                                  <tbody>
-                                    <tr>
-                                      <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;"> <a href="http://htmlemail.io" target="_blank" style="display: inline-block; color: #ffffff; background-color: #3498db; border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #3498db;">Call To Action</a> </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">This is a really simple email template. Its sole purpose is to get the recipient to click the button with no distractions.</p>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Good luck! Hope it works.</p>
+    """
+    TEMPLATE_END="""
                       </td>
                     </tr>
                   </table>
@@ -238,14 +228,8 @@ class NewJobsMailSender():
             <div class="footer" style="clear: both; Margin-top: 10px; text-align: center; width: 100%;">
               <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                 <tr>
-                  <td class="content-block" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 12px; color: #999999; text-align: center;">
-                    <span class="apple-link" style="color: #999999; font-size: 12px; text-align: center;">Company Inc, 3 Abbey Road, San Francisco CA 94102</span>
-                    <br> Don't like these emails? <a href="http://i.imgur.com/CScmqnj.gif" style="text-decoration: underline; color: #999999; font-size: 12px; text-align: center;">Unsubscribe</a>.
-                  </td>
-                </tr>
-                <tr>
                   <td class="content-block powered-by" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 12px; color: #999999; text-align: center;">
-                    Powered by <a href="http://htmlemail.io" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;">HTMLemail</a>.
+                    Powered by open source software: <a href="https://github.com/tristanlatr/alt_job" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;">Alt Job</a>.
                   </td>
                 </tr>
               </table>

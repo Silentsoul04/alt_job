@@ -21,7 +21,7 @@ def scrape(website, scraper_config, log_level, scraped_data_result, db=None):
                 },
             },
             "LOG_LEVEL":log_level,
-            "DOWNLOAD_DELAY":3,
+            "DOWNLOAD_DELAY":1,
             "COOKIES_ENABLED":False,
             "SPIDER_MODULES":"alt_job.scrapers",
             "ITEM_PIPELINES": {

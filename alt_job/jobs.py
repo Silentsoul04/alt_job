@@ -2,20 +2,21 @@ import scrapy
 
 class Job(scrapy.Item):
     # Mandatory Fields
-    url = scrapy.Field()
     title = scrapy.Field()
+    url = scrapy.Field()
 
     # extra fields that scrapers can fill
-    source = scrapy.Field()
     organisation = scrapy.Field()
-    description = scrapy.Field()
+    source = scrapy.Field()
     date_posted = scrapy.Field()
     apply_before = scrapy.Field()
     location = scrapy.Field()
     job_type = scrapy.Field()
-    
+    description = scrapy.Field()
+
     # Fields filled by pipeline
     keywords_matched = scrapy.Field()
+    
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
