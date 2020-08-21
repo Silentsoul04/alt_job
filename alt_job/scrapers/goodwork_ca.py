@@ -22,7 +22,11 @@ class Scraper_goodwork_ca(alt_job.scrapers.Scraper):
         job_dict['description']=BeautifulSoup(response.xpath('//*[@id="page"]/div[1]').get()).get_text()
         job_dict['organisation']=response.xpath('//*[@id="page"]/div[1]/div[1]/p[1]/a/text()').get()
         job_dict['location']=response.xpath('//*[@id="page"]/div[1]/div[1]/p[1]/text()[3]').get()
-        job_dict['date_posted']=response.xpath('//*[@id="page"]/div[2]/p[2]/small/text()').get().split('Date posted:', 1)[1].split('\n',1)[0]
+        date=response.xpath('//*[@id="page"]/div[2]/p[2]/small/text()[1]').get()
+        if date:
+            d_splited = date.split('Date posted:', 1)
+            if len(d_splited)>0:
+                job_dict['date_posted']=d_splited[1]
         return Job(job_dict)
 
     # TODO parse search form: http://fr.goodwork.ca/search
