@@ -23,7 +23,7 @@ DATE_FORMAT='%Y-%m-%dT%H-%M-%S'
 class NewJobsMailSender():
     '''Send jobs alerts'''
 
-    def __init__(self, smtphost, mailfrom, smtpuser, smtppass, smtpport, smtptls, mailto, attach_jobs_description=True):
+    def __init__(self, smtphost, mailfrom, smtpuser, smtppass, smtpport, smtptls, mailto):
         if not isinstance(mailto, list):
             raise TypeError('mailto must be a list, not '+str(type(mailto)))
         self.smtphost=smtphost
@@ -33,11 +33,10 @@ class NewJobsMailSender():
         self.smtpport=smtpport
         self.smtptls=smtptls
         self.mailto=mailto
-        self.attach_jobs_description=attach_jobs_description
 
     def send_mail_alert(self, jobs):
         '''Sending the report'''
-        date = datetime.datetime.now().isoformat(timespec='minute')
+        date = datetime.datetime.now().isoformat(timespec='minutes')
         # Building message
         message = MIMEMultipart("html")
         message['Subject'] = 'New job postings - {}'.format(date)
@@ -46,14 +45,16 @@ class NewJobsMailSender():
         body = self.build_message(jobs)
         message.attach(MIMEText(body, 'html'))
 
-        if self.attach_jobs_description:
-            for job in jobs:
-                file = io.BytesIO()
-                file.write(job.get_text().encode('utf-8'))
-                file.seek(0)
-                attachment=MIMEApplication(file.read(), Name=get_valid_filename(job['title'])+'.txt')
-                attachment.add_header("Content-Disposition", "attachment; filename=%s.txt"%(get_valid_filename(job['title'])))
-                message.attach(attachment)
+        log.debug('Mail HTML :\n'+body)
+
+        # if self.attach_jobs_description:
+        #     for job in jobs:
+        #         file = io.BytesIO()
+        #         file.write(job.get_text().encode('utf-8'))
+        #         file.seek(0)
+        #         attachment=MIMEApplication(file.read(), Name=get_valid_filename(job['title'])+'.txt')
+        #         attachment.add_header("Content-Disposition", "attachment; filename=%s.txt"%(get_valid_filename(job['title'])))
+        #         message.attach(attachment)
 
         # Attach excel file
         attachment=MIMEApplication(get_xlsx_file(items=jobs), Name=get_valid_filename(message['Subject'])+'.xlsx')
@@ -93,7 +94,6 @@ class NewJobsMailSender():
         message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Good luck!</p>'
 
         message = self.TEMPLATE_BEGIN+message+self.TEMPLATE_END
-        log.info('MAIL MESSAGE :\n'+message)
         return message
 
 
@@ -113,7 +113,7 @@ class NewJobsMailSender():
     /* -------------------------------------
         RESPONSIVE AND MOBILE FRIENDLY STYLES
     ------------------------------------- */
-    @media only screen and (max-width: 620px) {
+    @media only screen {
       table[class=body] h1 {
         font-size: 28px !important;
         margin-bottom: 10px !important;
@@ -200,8 +200,8 @@ class NewJobsMailSender():
     <table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background-color: #f6f6f6;">
       <tr>
         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">&nbsp;</td>
-        <td class="container" style="font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; Margin: 0 auto; max-width: 580px; padding: 10px; width: 580px;">
-          <div class="content" style="box-sizing: border-box; display: block; Margin: 0 auto; max-width: 580px; padding: 10px;">
+        <td class="container" style="font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; Margin: 0 auto; max-width: 1160px; padding: 10px; width: 1160px;">
+          <div class="content" style="box-sizing: border-box; display: block; Margin: 0 auto; max-width: 1160px; padding: 10px;">
 
             <!-- START CENTERED WHITE CONTAINER -->
             <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">This is preheader text. Some clients will show this text as a preview.</span>

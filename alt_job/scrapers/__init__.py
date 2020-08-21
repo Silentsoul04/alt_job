@@ -1,10 +1,8 @@
 import abc
 import re
 import scrapy
-import alt_job
-import alt_job.db
-import alt_job.scrape
 from alt_job.jobs import Job
+from alt_job import log
 
 class Scraper(abc.ABC, scrapy.Spider):
     """
@@ -27,13 +25,12 @@ class Scraper(abc.ABC, scrapy.Spider):
             url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(self.url)
         yield scrapy.Request(url, callback=self.parse )
 
-    def __init__(self, url, regex=None, parse_full_job_page=False, use_google_cache=False, db=None, turn_listing_pages=False):
+    def __init__(self, url, load_all_jobs=False, use_google_cache=False, db=None, load_all_pages=False):
         self.url=url
-        self.regex=regex
-        self.call_parse_full_job_page=parse_full_job_page
+        self.call_load_all_jobs=load_all_jobs
         self.use_google_cache=use_google_cache
         self.db=db
-        self.turn_listing_pages=turn_listing_pages
+        self.load_all_pages=load_all_pages
 
     def parse(self, response):
         """
@@ -42,7 +39,8 @@ class Scraper(abc.ABC, scrapy.Spider):
         This method is called automatically by scrapy buring the scrape process.  
         """
         page_jobs=[]
-        for div in self.get_jobs_list(response):
+        jobs_div_list=self.get_jobs_list(response)
+        for div in jobs_div_list:
             # At least url, title data is loaded from the list of job posting ...
             job_dict=self.get_job_dict(div)
             if not job_dict['url'] or not job_dict['title'] :
@@ -52,25 +50,35 @@ class Scraper(abc.ABC, scrapy.Spider):
             page_jobs.append(job_dict)
             # Load job page only if:
             # it's a new job (not in database)
-            # and parse_full_job_page=Yes
-            # and the method parse_full_job_page() has been re-wrote by the Scraper subclass
+            # and load_all_jobs=Yes
+            # and the method load_all_jobs() has been re-wrote by the Scraper subclass
             if ( (not self.db or self.db.find_job(job_dict)==None)
-                and self.call_parse_full_job_page 
-                and type(self).parse_full_job_page != Scraper.parse_full_job_page) :
-                # then parse_full_job_page is called with url of the full job post
+                and self.call_load_all_jobs 
+                and type(self).load_all_jobs != Scraper.load_all_jobs) :
+                # then load_all_jobs is called with url of the full job post
                 yield response.follow(job_dict['url'], 
-                    callback=self.parse_full_job_page, # Parse all other data (optionnal)
+                    callback=self.load_all_jobs, # Parse all other data (optionnal)
                     cb_kwargs=dict(job_dict=job_dict))
             else:
                 yield Job(job_dict)
-        
+
+        print("Scraped {} jobs from {}".format(len(page_jobs), response.url))
         # If all page jobs are new and 
         # The method get_next_page_url() has been re-wrote by the Scraper subclass
         # Scrape next page
-        if ( self.turn_listing_pages==True 
-            and not any([self.db.find_job(job_dict)!=None for job_dict in page_jobs]) 
-            and type(self).get_next_page_url != Scraper.get_next_page_url) :
-            yield response.follow(self.get_next_page_url(response), callback=self.parse)
+        # print("Scraper info: {}".format(self.__dict__))
+        if self.load_all_pages==True:
+            if self.db and any( [self.db.find_job(job_dict)!=None for job_dict in page_jobs] ):
+                print("All new job postings loaded")
+            else:
+                if self.get_next_page_url(response)!=None :
+                    print("Loading next page...")
+                    yield response.follow(self.get_next_page_url(response), callback=self.parse)
+                else:
+                    if type(self).get_next_page_url != Scraper.get_next_page_url:
+                        print("Last page loaded")
+                    else:
+                        print("Scraper {} does not support load_all_pages=Yes".format(self.name))
     
     @abc.abstractmethod
     def get_jobs_list(self, response):
@@ -100,10 +108,10 @@ class Scraper(abc.ABC, scrapy.Spider):
         """
         pass
 
-    def parse_full_job_page(self, response, job_dict):
+    def load_all_jobs(self, response, job_dict):
         """
         Scrapers can re write this method. 
-        This method must be re-wrote to use Scraper(parse_full_job_page=True)
+        This method must be re-wrote to use Scraper(load_all_jobs=True)
 
         Arguments:  
         - response: scrapy response object for the job page 
@@ -111,7 +119,7 @@ class Scraper(abc.ABC, scrapy.Spider):
             this function must return a new Job() with this  
             data and any other relevant info from url  
 
-        This method is called by `Scraper.parse()` method if parse_full_job_page==True  
+        This method is called by `Scraper.parse()` method if load_all_jobs==True  
         Must return a Job()  
 
         """
@@ -120,12 +128,12 @@ class Scraper(abc.ABC, scrapy.Spider):
     def get_next_page_url(self, response):
         """
         Scrapers can re write this method. 
-        This method must be re-wrote to use Scraper(turn_listing_pages=True)
+        This method must be re-wrote to use Scraper(load_all_pages=True)
 
         Arguments:  
         - response: scrapy response object for the listing page
 
-        This method is called by `Scraper.parse()` method if turn_listing_pages==True  
-        Must return a URL string  
+        This method is called by `Scraper.parse()` method if load_all_pages==True  
+        Must return a URL string or None if there no more pages to load    
         """
         return None

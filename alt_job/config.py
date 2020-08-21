@@ -41,7 +41,7 @@ class JobsConfig(collections.UserDict):
         for scraper in self.data:
             for config_option in self.data[scraper]:
                 # List of booleans config values
-                if config_option in ['use_google_cache', 'smtptls', 'parse_full_job_page', 'turn_listing_pages', 'attach_jobs_description']:
+                if config_option in ['use_google_cache', 'smtptls', 'load_all_jobs', 'load_all_pages', 'attach_jobs_description']:
                     self.data[scraper][config_option]=getbool(self.parser, scraper, config_option)
                 # list of json config values
                 if config_option in ['mailto']:
@@ -103,45 +103,45 @@ smtpport=587
 smtptls=Yes
 
 # Email notif settings
-mailto=["user@gmail.com"]
-attach_jobs_description=No
 
-#### Scrapers 
+mailto=["user@gmail.com"]
+
+# Scrapers 
 
 [arrondissement.com]
 url=https://www.arrondissement.com/tout-list-emplois/
-parse_full_job_page=False
-turn_listing_pages=False
+load_all_jobs=False
+load_all_pages=False
 
 [cdeacf.ca]
 url=http://cdeacf.ca/recherches?f[0]=type:offre_demploi
-parse_full_job_page=False
-turn_listing_pages=False
+load_all_jobs=False
+load_all_pages=False
 
 [chantier.qc.ca]
 url=https://chantier.qc.ca/decouvrez-leconomie-sociale/offres-demploi
-parse_full_job_page=False
-turn_listing_pages=False
+load_all_jobs=False
+load_all_pages=False
 
 [charityvillage.com]
 url=
-parse_full_job_page=False
-turn_listing_pages=False
+load_all_jobs=False
+load_all_pages=False
 
 [engages.ca]
-url=
-parse_full_job_page=False
-turn_listing_pages=False
+url=https://www.engages.ca/emplois?search%5Bkeyword%5D=&search%5Bjob_sector%5D=&search%5Bjob_city%5D=Montr%C3%A9al
+load_all_jobs=False
+load_all_pages=False
 
 [goodwork.ca]
 url=https://www.goodwork.ca/jobs.php?prov=QC
-parse_full_job_page=False
-turn_listing_pages=False
+load_all_jobs=False
+load_all_pages=False
 
 [enviroemplois.org]
 url=
-parse_full_job_page=False
-
+load_all_jobs=False
+load_all_pages=False
 """
 
 # Config default values

@@ -34,7 +34,7 @@ class AlternativeJob(object):
             self.config = JobsConfig()
         init_log(self.config['alt_job']['log_level'])
 
-        log.info('ALT JOB CONFIGURATION\n'+json.dumps(dict(self.config), indent=4))
+        log.debug('Configuration\n'+json.dumps(dict(self.config), indent=4))
 
         # init database
         self.db=None
@@ -47,23 +47,24 @@ class AlternativeJob(object):
 
         for website in alt_job.scrape.get_all_scrapers():
             if website in self.config: 
-                scraped_data.extend(self.process_scrape(website))
+                scraped_jobs=self.process_scrape(website)
+                scraped_data.extend(scraped_jobs)
 
         new_jobs = [ Job(job) for job in scraped_data if not self.db.find_job(job) ]
 
         older_jobs = [ c for c in scraped_data if c not in new_jobs ]
         
-        log.info('OLDER JOBS ARE\n{}'.format('\n'.join([ str(j['title'])+'\n - URL: '+str(j['url']) for j in older_jobs ])))
+        log.debug('Older jobs are\n{}'.format('\n'.join([ str(j['title'])+'\n - URL: '+str(j['url']) for j in older_jobs ])))
 
-        log.info('NEW JOBS ARE\n{}'.format('\n'.join([ str(j['title'])+'\n - URL: '+str(j['url']) for j in new_jobs ] or ['None'])))
+        log.debug('New jobs are\n{}'.format('\n'.join([ str(j['title'])+'\n - URL: '+str(j['url']) for j in new_jobs ] or ['None'])))
 
         self.db.update_and_write_jobs(new_jobs)
 
-        log.info('JOBS WROTE TO FILE: {}'.format(self.db.filepath))
+        log.info('Jobs write to file: {}'.format(self.db.filepath))
 
         if new_jobs:
             mail=NewJobsMailSender(**self.config['mail_sender'])
-            log.info('SENDING EMAIL ALERT')
+            log.info('Sending email digest')
             mail.send_mail_alert(new_jobs)
 
     def process_scrape(self, website):
