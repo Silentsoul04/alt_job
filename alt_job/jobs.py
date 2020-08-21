@@ -11,6 +11,8 @@ class Job(scrapy.Item):
     apply_before = scrapy.Field()
     location = scrapy.Field()
     job_type = scrapy.Field()
+    salary = scrapy.Field()
+    week_hours = scrapy.Field()
     description = scrapy.Field()
 
     # Fields filled by pipeline
