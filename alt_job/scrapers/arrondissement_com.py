@@ -20,7 +20,11 @@ class Scraper_arrondissement_com(alt_job.scrapers.Scraper):
         }
 
     def parse_full_job_page(self, response, job_dict):
-        job_dict['description']=BeautifulSoup(response.xpath('//div[@id="fiche"]/div[@class="publication"]').get()).get_text()
+        job_dict['description']=BeautifulSoup(response.xpath('//div[@id="fiche"]/div[contains(@class,"publication")]').get()).get_text()
+        job_dict['apply_before']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[6]/text()').get()
+        job_dict['job_type']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[4]/text()').get()
+        job_dict['week_hours']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[2]/text()').get()
+        job_dict['salary']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[3]/text()').get()
         return Job(job_dict)
 
     def get_next_page_url(self, response):
