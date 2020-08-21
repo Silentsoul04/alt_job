@@ -1,12 +1,12 @@
 import xlsxwriter
 import tempfile
-
 from alt_job.jobs import Job
 
 def get_xlsx_file(items: list):
     """
         Return excel file encoded as Bytes
     """
+    print("Making Excel file...")
     with tempfile.NamedTemporaryFile() as excel_file:
         with xlsxwriter.Workbook(excel_file.name) as workbook:
             headers={ 

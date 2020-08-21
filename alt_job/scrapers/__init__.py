@@ -36,6 +36,8 @@ class Scraper(abc.ABC, scrapy.Spider):
         Template method for all scrapers. Do NOT re write this method.  
         Return a generator iterable for parsed jobs (Job objects).  
         This method is called automatically by scrapy buring the scrape process.  
+
+        #TODO: User global log handler instead of print, find the issue why log isn't working 
         """
         page_jobs=[]
         jobs_div_list=self.get_jobs_list(response)
@@ -59,11 +61,16 @@ class Scraper(abc.ABC, scrapy.Spider):
                         callback=self.parse_full_job_page, # Parse all other data (optionnal)
                         cb_kwargs=dict(job_dict=job_dict))
                 else:
-                    print("Scraper {} does not support load_full_jobs=Yes".format(self.name))
+                    yield Job(job_dict)
             else:
                 yield Job(job_dict)
 
         print("Scraped {} jobs from {}".format(len(page_jobs), response.url))
+
+        if self.load_full_jobs and type(self).parse_full_job_page == Scraper.parse_full_job_page:
+            print("Scraper {} does not support load_full_jobs=Yes".format(self.name))
+
+        
         # If all page jobs are new and 
         # The method get_next_page_url() has been re-wrote by the Scraper subclass
         # Scrape next page
