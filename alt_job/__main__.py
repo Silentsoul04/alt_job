@@ -6,7 +6,7 @@ import multiprocessing
 from alt_job.__version__ import __version__
 from alt_job.config import JobsConfig, TEMPLATE_FILE
 from alt_job.db import  JsonDataBase
-from alt_job.mail import NewJobsMailSender
+from alt_job.mail import MailSender
 from alt_job.jobs import Job
 import alt_job.scrape
 from alt_job import log, init_log
@@ -63,7 +63,7 @@ class AlternativeJob(object):
         log.info('Jobs write to file: {}'.format(self.db.filepath))
 
         if new_jobs:
-            mail=NewJobsMailSender(**self.config['mail_sender'])
+            mail=MailSender(**self.config['mail_sender'])
             log.info('Sending email digest')
             mail.send_mail_alert(new_jobs)
 

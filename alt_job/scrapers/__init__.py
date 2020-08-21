@@ -24,9 +24,9 @@ class Scraper(abc.ABC, scrapy.Spider):
             url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(self.url)
         yield scrapy.Request(url, callback=self.parse )
 
-    def __init__(self, url, load_all_jobs=False, use_google_cache=False, db=None, load_all_pages=False):
+    def __init__(self, url, load_full_jobs=False, use_google_cache=False, db=None, load_all_pages=False):
         self.url=url
-        self.load_all_jobs=load_all_jobs
+        self.load_full_jobs=load_full_jobs
         self.use_google_cache=use_google_cache
         self.db=db
         self.load_all_pages=load_all_pages
@@ -49,17 +49,17 @@ class Scraper(abc.ABC, scrapy.Spider):
             page_jobs.append(job_dict)
             # Load job page only if:
             # it's a new job (not in database)
-            # and load_all_jobs=Yes
+            # and load_full_jobs=Yes
             # and the method parse_full_job_page() has been re-wrote by the Scraper subclass
             if ( (not self.db or self.db.find_job(job_dict)==None)
-                and self.load_all_jobs ):
+                and self.load_full_jobs ):
                 if type(self).parse_full_job_page != Scraper.parse_full_job_page:
-                    # then load_all_jobs is called with url of the full job post
+                    # then load_full_jobs is called with url of the full job post
                     yield response.follow(job_dict['url'], 
                         callback=self.parse_full_job_page, # Parse all other data (optionnal)
                         cb_kwargs=dict(job_dict=job_dict))
                 else:
-                    print("Scraper {} does not support load_all_jobs=Yes".format(self.name))
+                    print("Scraper {} does not support load_full_jobs=Yes".format(self.name))
             else:
                 yield Job(job_dict)
 
@@ -114,7 +114,7 @@ class Scraper(abc.ABC, scrapy.Spider):
     def parse_full_job_page(self, response, job_dict):
         """
         Scrapers can re write this method. 
-        This method must be re-wrote to use Scraper(load_all_jobs=True)
+        This method must be re-wrote to use Scraper(load_full_jobs=True)
 
         Arguments:  
         - response: scrapy response object for the job page 
@@ -122,7 +122,7 @@ class Scraper(abc.ABC, scrapy.Spider):
             this function must return a new Job() with this  
             data and any other relevant info from url  
 
-        This method is called by `Scraper.parse()` method if load_all_jobs==True  
+        This method is called by `Scraper.parse()` method if load_full_jobs==True  
         Must return a Job()  
 
         """

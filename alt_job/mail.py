@@ -21,7 +21,7 @@ from alt_job.xlsx import get_xlsx_file
 # Date format used everywhere
 DATE_FORMAT='%Y-%m-%dT%H-%M-%S'
 
-class NewJobsMailSender():
+class MailSender():
     '''Send jobs alerts'''
 
     def __init__(self, smtphost, mailfrom, smtpuser, smtppass, smtpport, smtptls, mailto):
