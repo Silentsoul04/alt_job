@@ -25,7 +25,7 @@ setup(
     version=version['__version__'],
     packages=['alt_job',],
     install_requires=[
-          'scrapy', 'bs4', 'XlsxWriter'
+          'scrapy', 'bs4', 'XlsxWriter', 'scrapy-user-agents'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
