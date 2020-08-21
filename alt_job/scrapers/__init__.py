@@ -50,13 +50,13 @@ class Scraper(abc.ABC, scrapy.Spider):
             # Load job page only if:
             # it's a new job (not in database)
             # and load_all_jobs=Yes
-            # and the method parse_full_job() has been re-wrote by the Scraper subclass
+            # and the method parse_full_job_page() has been re-wrote by the Scraper subclass
             if ( (not self.db or self.db.find_job(job_dict)==None)
                 and self.load_all_jobs ):
-                if type(self).parse_full_job != Scraper.parse_full_job:
+                if type(self).parse_full_job_page != Scraper.parse_full_job_page:
                     # then load_all_jobs is called with url of the full job post
                     yield response.follow(job_dict['url'], 
-                        callback=self.parse_full_job, # Parse all other data (optionnal)
+                        callback=self.parse_full_job_page, # Parse all other data (optionnal)
                         cb_kwargs=dict(job_dict=job_dict))
                 else:
                     print("Scraper {} does not support load_all_jobs=Yes".format(self.name))
@@ -111,7 +111,7 @@ class Scraper(abc.ABC, scrapy.Spider):
         """
         pass
 
-    def parse_full_job(self, response, job_dict):
+    def parse_full_job_page(self, response, job_dict):
         """
         Scrapers can re write this method. 
         This method must be re-wrote to use Scraper(load_all_jobs=True)
