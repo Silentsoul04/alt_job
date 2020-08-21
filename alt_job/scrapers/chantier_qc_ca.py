@@ -22,5 +22,5 @@ class Scraper_chantier_qc_ca(alt_job.scrapers.Scraper):
         job_dict['organisation']=response.xpath('//*[contains(@id,"single-post")]/div[3]/strong[1]/text()').get()
         job_dict['date_posted']=response.xpath('//*[contains(@id,"single-post")]/div[1]/text()').get(),
         job_dict['apply_before']=response.xpath('//*[contains(@id,"single-post")]/div[3]/strong[3]/text()').get(),
-        job_dict['location']=response.xpath('//*[contains(@id,"single-post)]/div[3]/strong[2]/text()').get()
+        job_dict['location']=response.xpath('//*[contains(@id,"single-post")]/div[3]/strong[2]/text()').get()
         return Job(job_dict)
