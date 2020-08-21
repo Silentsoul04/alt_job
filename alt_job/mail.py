@@ -12,6 +12,7 @@ from datetime import datetime
 import io
 import scrapy.mail
 import datetime
+from string import Template
 from alt_job import get_valid_filename
 from alt_job import log
 from alt_job.jobs import Job
@@ -93,13 +94,13 @@ class NewJobsMailSender():
 
         message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Good luck!</p>'
 
-        message = self.TEMPLATE_BEGIN+message+self.TEMPLATE_END
+        message = self.TEMPLATE_EMAIL.substitute(content=message)
         return message
 
 
 #TODO ADJUST FOR ALT_JOP SCRAPER
 
-    TEMPLATE_BEGIN="""
+    TEMPLATE_EMAIL=Template("""
 <!doctype html>
 <html>
   <head>
@@ -200,8 +201,8 @@ class NewJobsMailSender():
     <table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background-color: #f6f6f6;">
       <tr>
         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">&nbsp;</td>
-        <td class="container" style="font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; Margin: 0 auto; max-width: 1160px; padding: 10px; width: 1160px;">
-          <div class="content" style="box-sizing: border-box; display: block; Margin: 0 auto; max-width: 1160px; padding: 10px;">
+        <td class="container" style="font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; Margin: 0 auto; max-width: 800px; padding: 10px; width: 800px;">
+          <div class="content" style="box-sizing: border-box; display: block; Margin: 0 auto; max-width: 800px; padding: 10px;">
 
             <!-- START CENTERED WHITE CONTAINER -->
             <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">This is preheader text. Some clients will show this text as a preview.</span>
@@ -213,8 +214,9 @@ class NewJobsMailSender():
                   <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                     <tr>
                       <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
-    """
-    TEMPLATE_END="""
+
+                      $content
+
                       </td>
                     </tr>
                   </table>
@@ -243,5 +245,4 @@ class NewJobsMailSender():
       </tr>
     </table>
   </body>
-</html>
-"""
+</html>""")

@@ -7,7 +7,6 @@ class Job(scrapy.Item):
 
     # extra fields that scrapers can fill
     organisation = scrapy.Field()
-    source = scrapy.Field()
     date_posted = scrapy.Field()
     apply_before = scrapy.Field()
     location = scrapy.Field()
@@ -16,7 +15,7 @@ class Job(scrapy.Item):
 
     # Fields filled by pipeline
     keywords_matched = scrapy.Field()
-    
+    source = scrapy.Field()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

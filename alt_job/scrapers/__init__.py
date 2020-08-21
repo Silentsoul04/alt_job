@@ -2,7 +2,6 @@ import abc
 import re
 import scrapy
 from alt_job.jobs import Job
-from alt_job import log
 
 class Scraper(abc.ABC, scrapy.Spider):
     """
@@ -27,7 +26,7 @@ class Scraper(abc.ABC, scrapy.Spider):
 
     def __init__(self, url, load_all_jobs=False, use_google_cache=False, db=None, load_all_pages=False):
         self.url=url
-        self.call_load_all_jobs=load_all_jobs
+        self.load_all_jobs=load_all_jobs
         self.use_google_cache=use_google_cache
         self.db=db
         self.load_all_pages=load_all_pages
@@ -51,14 +50,16 @@ class Scraper(abc.ABC, scrapy.Spider):
             # Load job page only if:
             # it's a new job (not in database)
             # and load_all_jobs=Yes
-            # and the method load_all_jobs() has been re-wrote by the Scraper subclass
+            # and the method parse_full_job() has been re-wrote by the Scraper subclass
             if ( (not self.db or self.db.find_job(job_dict)==None)
-                and self.call_load_all_jobs 
-                and type(self).load_all_jobs != Scraper.load_all_jobs) :
-                # then load_all_jobs is called with url of the full job post
-                yield response.follow(job_dict['url'], 
-                    callback=self.load_all_jobs, # Parse all other data (optionnal)
-                    cb_kwargs=dict(job_dict=job_dict))
+                and self.load_all_jobs ):
+                if type(self).parse_full_job != Scraper.parse_full_job:
+                    # then load_all_jobs is called with url of the full job post
+                    yield response.follow(job_dict['url'], 
+                        callback=self.parse_full_job, # Parse all other data (optionnal)
+                        cb_kwargs=dict(job_dict=job_dict))
+                else:
+                    print("Scraper {} does not support load_all_jobs=Yes".format(self.name))
             else:
                 yield Job(job_dict)
 
@@ -69,14 +70,16 @@ class Scraper(abc.ABC, scrapy.Spider):
         # print("Scraper info: {}".format(self.__dict__))
         if self.load_all_pages==True:
             if self.db and any( [self.db.find_job(job_dict)!=None for job_dict in page_jobs] ):
-                print("All new job postings loaded")
+                # print("All new job postings loaded")
+                pass
             else:
                 if self.get_next_page_url(response)!=None :
-                    print("Loading next page...")
+                    # print("Loading next page...")
                     yield response.follow(self.get_next_page_url(response), callback=self.parse)
                 else:
                     if type(self).get_next_page_url != Scraper.get_next_page_url:
-                        print("Last page loaded")
+                        # print("Last page loaded")
+                        pass
                     else:
                         print("Scraper {} does not support load_all_pages=Yes".format(self.name))
     
@@ -108,7 +111,7 @@ class Scraper(abc.ABC, scrapy.Spider):
         """
         pass
 
-    def load_all_jobs(self, response, job_dict):
+    def parse_full_job(self, response, job_dict):
         """
         Scrapers can re write this method. 
         This method must be re-wrote to use Scraper(load_all_jobs=True)

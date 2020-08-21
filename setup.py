@@ -3,7 +3,7 @@
 from setuptools import setup
 import sys
 if sys.version_info[0] < 3: 
-    raise EnvironmentError("Sorry, you must use Python 3")
+    raise Exception("Sorry, you must use Python 3")
 import pathlib
 
 
