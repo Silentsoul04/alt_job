@@ -20,5 +20,7 @@ class Scraper_chantier_qc_ca(alt_job.scrapers.Scraper):
     def parse_full_job_page(self, response, job_dict):
         job_dict['description']=BeautifulSoup(response.xpath('//*[contains(@id,"single-post")]').get()).get_text()
         job_dict['organisation']=response.xpath('//*[contains(@id,"single-post")]/div[3]/strong[1]/text()').get()
-        job_dict['date_posted']=response.xpath('//*[contains(@id,"single-post")]/div[1]/text()').get()
+        job_dict['date_posted']=response.xpath('//*[contains(@id,"single-post")]/div[1]/text()').get(),
+        job_dict['apply_before']=response.xpath('//*[contains(@id,"single-post")]/div[3]/strong[3]/text()').get(),
+        job_dict['location']=response.xpath('//*[contains(@id,"single-post)]/div[3]/strong[2]/text()').get()
         return Job(job_dict)
