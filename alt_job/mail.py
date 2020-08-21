@@ -97,9 +97,6 @@ class MailSender():
         message = self.TEMPLATE_EMAIL.substitute(content=message)
         return message
 
-
-#TODO ADJUST FOR ALT_JOP SCRAPER
-
     TEMPLATE_EMAIL=Template("""
 <!doctype html>
 <html>
@@ -215,7 +212,9 @@ class MailSender():
                     <tr>
                       <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
 
+                      <!-- START DYNAMIC CONTENT AREA -->
                       $content
+                      <!-- END DYNAMIC CONTENT AREA -->
 
                       </td>
                     </tr>

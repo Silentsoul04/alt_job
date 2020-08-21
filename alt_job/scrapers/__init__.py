@@ -17,19 +17,19 @@ class Scraper(abc.ABC, scrapy.Spider):
     allowed_domains = ["webcache.googleusercontent.com"]
     
 
-    # TODO use google cache by default and retry request with rela site if website snapshot is older than X hours
+    # TODO use google cache by default and retry request with real site if website snapshot is older than X hours
     def start_requests(self):
         url=self.url
         if self.use_google_cache:
             url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(self.url)
         yield scrapy.Request(url, callback=self.parse )
 
-    def __init__(self, url, load_full_jobs=False, use_google_cache=False, db=None, load_all_pages=False):
+    def __init__(self, url, use_google_cache=False, db=None, load_full_jobs=True, load_all_new_pages=True):
         self.url=url
         self.load_full_jobs=load_full_jobs
         self.use_google_cache=use_google_cache
         self.db=db
-        self.load_all_pages=load_all_pages
+        self.load_all_new_pages=load_all_new_pages
 
     def parse(self, response):
         """
@@ -68,14 +68,13 @@ class Scraper(abc.ABC, scrapy.Spider):
         print("Scraped {} jobs from {}".format(len(page_jobs), response.url))
 
         if self.load_full_jobs and type(self).parse_full_job_page == Scraper.parse_full_job_page:
-            print("Scraper {} does not support load_full_jobs=Yes".format(self.name))
-
+            print("Scraper {} does not support load_full_jobs=True, some informations might be missing".format(self.name))
         
         # If all page jobs are new and 
         # The method get_next_page_url() has been re-wrote by the Scraper subclass
         # Scrape next page
         # print("Scraper info: {}".format(self.__dict__))
-        if self.load_all_pages==True:
+        if self.load_all_new_pages==True:
             if self.db and any( [self.db.find_job(job_dict)!=None for job_dict in page_jobs] ):
                 # print("All new job postings loaded")
                 pass
@@ -88,7 +87,7 @@ class Scraper(abc.ABC, scrapy.Spider):
                         # print("Last page loaded")
                         pass
                     else:
-                        print("Scraper {} does not support load_all_pages=Yes".format(self.name))
+                        print("Scraper {} does not support load_all_new_pages=True, some new job postings might be missing".format(self.name))
     
     @abc.abstractmethod
     def get_jobs_list(self, response):
@@ -114,7 +113,7 @@ class Scraper(abc.ABC, scrapy.Spider):
 
         Must return a dict {'url':'https://job-url' , 'title':'Job title', 'organisation':'My community' [...] }
 
-        The dict must at least contain : url, title and organisation. The rest of the Job fields are optionnal but recommended
+        The dict must at least contain : url and title. The rest of the Job fields are optionnal but recommended
         """
         pass
 
@@ -138,12 +137,12 @@ class Scraper(abc.ABC, scrapy.Spider):
     def get_next_page_url(self, response):
         """
         Scrapers can re write this method. 
-        This method must be re-wrote to use Scraper(load_all_pages=True)
+        This method must be re-wrote to use Scraper(load_all_new_pages=True)
 
         Arguments:  
         - response: scrapy response object for the listing page
 
-        This method is called by `Scraper.parse()` method if load_all_pages==True  
+        This method is called by `Scraper.parse()` method if load_all_new_pages==True  
         Must return a URL string or None if there no more pages to load    
         """
         return None
