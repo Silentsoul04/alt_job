@@ -76,20 +76,20 @@ class NewJobsMailSender():
         '''Build mail message text base on jobs'''
         message=''
         message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hello,</p>'
-        message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;"><b>{} new job postings have been found.</b><br />You can review the jobs from this email or download the attached Excel file with extra data.</p>'.format(len(jobs))
+        message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;"><b>{} new job postings have been found.</b><br />You can review the jobs from this email or download the attached Excel file.</p>'.format(len(jobs))
                         
         all_sources=set([j['source'] for j in jobs])
         for src in all_sources:
             src_posting=[j for j in jobs if j['source']==src]
             message += "<h4>{} job postings from {}</h4>".format(len(src_posting), src)
-            message += '<details><summary style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">See list</summary><p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">'
+            message += '<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">'
             for job in src_posting:
                 message+="""<a href="{url}">{title}</a>{org} | """.format(
                     title=job['title'],
                     url=job['url'],
                     org='' if not job['organisation'] else ' ({})'.format(job['organisation'])
                 )
-            message += "</p></details>"
+            message += "</p>"
 
         message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Good luck!</p>'
 
