@@ -91,7 +91,7 @@ def getint(conf, section, key):
 TEMPLATE_FILE="""[alt_job]
 log_level=INFO
 scrapy_log_level=WARNING
-# jobs_datafile=
+# jobs_datafile=/home/user/data/jobs.json
 
 [mail_sender]
 # Email server settings
@@ -148,8 +148,7 @@ DEFAULT_CONFIG={
     'alt_job':{
         'log_level':'INFO',
         'scrapy_log_level':'ERROR',
-        'jobs_datafile':'',
-        'workers':20
+        'jobs_datafile':''
     },
 
     'mail_sender':{

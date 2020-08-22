@@ -61,6 +61,7 @@ class MailSender():
         attachment.add_header("Content-Disposition", "attachment; filename={}".format(get_valid_filename(message['Subject'])+'.xlsx'))
         message.attach(attachment)
 
+        log.info('Sending email digest')
         server=smtplib.SMTP(host=self.smtphost, port=self.smtpport)
         server.ehlo_or_helo_if_needed()
         # SSL
