@@ -2,8 +2,8 @@
   
 Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email. 
 
-This digest include a Excel file all job postings data. 
-The scraped data include: job title, type, salary, week_hours, date posted, apply before date and full description.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column. 
+The digest include a Excel file all job postings data.   
+The scraped data include: job title, type, salary, week_hours, date posted, apply before date and full description.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens)) 
 
 This project is still under construction! 🚧
 
