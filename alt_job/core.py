@@ -1,14 +1,14 @@
 import argparse
 import json
 import multiprocessing
-
+from shutil import copyfile
 from .__version__ import __version__
 from .scrape import scrape, get_all_scrapers
 from .config import AltJobConfigArgParseOptions, TEMPLATE_FILE
 from .db import  JsonDataBase
 from .mail import MailSender
 from .jobs import Job
-from .utils import log, init_log, perform
+from .utils import log, init_log, perform, get_xlsx_file
 
 class AltJob(object):
 
@@ -36,9 +36,8 @@ class AltJob(object):
         else:
             self.db=JsonDataBase()
 
-        enabled_scrapers=[ w for w in get_all_scrapers() if w in self.config ]
-        if len(enabled_scrapers)>0:
-            log.info("Scraping websites: {}".format(', '.join(enabled_scrapers)))
+        if len(self.config['alt_job']['enabled_scrapers'] )>0:
+            log.info("Scraping websites: {}".format(', '.join(self.config['alt_job']['enabled_scrapers'])))
         else:
             print("No website to scrape! Please configure at least one scraper in your config file")
             exit(1)
@@ -51,8 +50,10 @@ class AltJob(object):
         #     scraped_jobs=self.process_scrape(scraper)
         #     scraped_data.extend(scraped_jobs)
 
-        returned_data=perform(self.process_scrape, enabled_scrapers, 
-            asynch=self.config['alt_job']['workers']>1, workers=self.config['alt_job']['workers'], progress=len(enabled_scrapers)>1 )
+        returned_data=perform(self.process_scrape, self.config['alt_job']['enabled_scrapers'], 
+            asynch=self.config['alt_job']['workers']>1,
+            workers=self.config['alt_job']['workers'],
+            progress=len(self.config['alt_job']['enabled_scrapers'])>1 )
 
         # returned_data is a list of lists
         for scraped_jobs in returned_data:
@@ -72,9 +73,16 @@ class AltJob(object):
         if self.db.filepath!='null':
             log.info('Jobs write to file: {}'.format(self.db.filepath))
 
+        if self.config['alt_job']['xlsx_output']:
+            file = get_xlsx_file(new_jobs)
+            copyfile(file.name, self.config['alt_job']['xlsx_output'])
+            log.info("XLSX file wrote at {}".format(self.config['alt_job']['xlsx_output']))
+
         if new_jobs:
-            mail=MailSender(**self.config['mail_sender'])
-            mail.send_mail_alert(new_jobs)
+            if self.config['mail_sender']['smtphost']:
+                mail=MailSender(**self.config['mail_sender'])
+                mail.send_mail_alert(new_jobs)
+            log.info("[mail_sender] not configured, not sending email")
         else:
             log.info("No new jobs, not sending email")
 
@@ -92,6 +100,6 @@ class AltJob(object):
         return scraped_data_result
 
     
-
-    def print_version(self):
+    @staticmethod
+    def print_version():
         print('Alt Job version {}'.format(__version__))

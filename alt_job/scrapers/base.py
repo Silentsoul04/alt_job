@@ -76,28 +76,32 @@ class Scraper(abc.ABC, scrapy.Spider):
             else:
                 yield Job(job_dict)
 
-        print("Scraped {} jobs from {}".format(len(page_jobs), response.url))
+        
 
-        if self.load_full_jobs and type(self).parse_full_job_page == Scraper.parse_full_job_page:
-            print("Scraper {} does not support load_full_jobs=True, some informations might be missing".format(self.name))
+        if self.load_full_jobs:
+            if type(self).parse_full_job_page == Scraper.parse_full_job_page:
+                print("Scraper {} does not support load_full_jobs=True, some informations might be missing".format(self.name))
+            else:
+                print("Scraping {} jobs from {}...".format(len(page_jobs), response.url))
+        else:
+            print("Scraped {} jobs from {}. load_full_jobs=False, some informations might be missing".format(len(page_jobs), response.url))
        
         """
         If all page jobs are new and 
         The method get_next_page_url() has been re-wrote by the Scraper subclass
         Scrape next page
         """
-        print("Scraper info: {}".format(self.__dict__))
         if self.load_all_new_pages==True:
             if self.db and any( [self.db.find_job(job_dict)!=None for job_dict in page_jobs] ):
-                # print("All new job postings loaded")
+                # All new job postings loaded
                 pass
             else:
                 if self.get_next_page_url(response)!=None :
-                    # print("Loading next page...")
+                    # Loading next page...
                     yield response.follow(self.get_next_page_url(response), callback=self.parse)
                 else:
                     if type(self).get_next_page_url != Scraper.get_next_page_url:
-                        # print("Last page loaded")
+                        # Last page loaded
                         pass
                     else:
                         print("Scraper {} does not support load_all_new_pages=True, some new job postings might be missing".format(self.name))

@@ -4,10 +4,14 @@ import os
 import json
 import copy
 from .utils import parse_timedelta, log
+from .scrape import get_all_scrapers
 import argparse
 
 # Configuration handling
 class AltJobConfigArgParseOptions(collections.UserDict):
+    """
+    Wrap argparse and configparser objects into one configuration dict object
+    """
     def __init__(self):
         # overwriting arguments
         parser1 = argparse.ArgumentParser(
@@ -25,6 +29,9 @@ class AltJobConfigArgParseOptions(collections.UserDict):
             config_file = ConfigurationFile(files=args1.config_file)
         else:
             config_file = ConfigurationFile()
+
+        # Determine enlabled scrapers
+        config_file['alt_job']['enabled_scrapers'] = [ w for w in get_all_scrapers() if w in config_file ]
         
         # Determine the default arguments
         defaults_args=config_file['alt_job']
@@ -37,19 +44,39 @@ class AltJobConfigArgParseOptions(collections.UserDict):
             description="""Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email.""",
             prog='python3 -m alt_job', formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             )
+
         parser2.set_defaults(**defaults_args)
 
         # Arguments that overwrites [alt_job] config values
+        parser2.add_argument("-x", "--xlsx_output", metavar='<File path>', help='Write all NEW jobs to Excel file')
+        parser2.add_argument("--enabled_scrapers", metavar='<Website>', help="List of enabled scrapers. By default it's all scrapers configured in config file(s)", nargs='+')
+        parser2.add_argument("--jobs_datafile", metavar='<File path>', 
+            help="""JSON file to store ALL jobs data. Default is '~/jobs.json'. 
+            Use 'null' keyword to disable the storage of the datafile, all jobs will be considered as new and will be loaded""")
+        parser2.add_argument("--workers", metavar='<Number>', help="Number of websites to scrape asynchronously", type=int)
+        parser2.add_argument("--quick", "--no_load_full_jobs", action='store_true', help='Do not load the full job description page and parse additionnal data. This settings is applied to all scrapers')
+        parser2.add_argument("--first_page_only", "--no_load_all_new_pages", action='store_true', help='Do not load new job listing pages until older jobs are found. This settings is applied to all scrapers')
         parser2.add_argument("--log_level", metavar='<String>', help='Alt job log level. Exemple: DEBUG')
         parser2.add_argument("--scrapy_log_level", metavar='<String>', help='Scrapy log level. Exemple: DEBUG')
-        parser2.add_argument("--jobs_datafile", metavar='<File path>',help='JSON file to store the jobs data')
-        parser2.add_argument("--workers", metavar='<Number>', help="Number of asynchronous workers", type=int)
+        
         args2 = parser2.parse_args(remaining_argv)
         
+        # config_file['alt_job'].update({k:v for (k,v) in vars(args1).items() if v!=None})
+        # config_file['alt_job'].update({k:v for (k,v) in vars(args2).items() if v!=None})
+
         # Update 'alt_job' section witll all parsed arguments
         config_file['alt_job'].update(vars(args2))
         config_file['alt_job'].update(vars(args1))
 
+        # Overwriting load_all_new_pages and load_full_jobs if passed --first_page_only or --quick
+        if args2.first_page_only:
+            for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
+                config_file[website]['load_all_new_pages']=False
+        if args2.quick:
+            for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
+                config_file[website]['load_full_jobs']=False
+
+        
         self.data=config_file
 
 # Config default values
@@ -58,7 +85,8 @@ DEFAULT_CONFIG={
         'log_level':'INFO',
         'scrapy_log_level':'ERROR',
         'jobs_datafile':'',
-        'workers':5
+        'workers':5,
+        'xlsx_output':''
     },
 
     'mail_sender':{
@@ -70,8 +98,11 @@ DEFAULT_CONFIG={
         'smtptls':'Yes',
         'mailto':'[]'
     }
-
 }
+
+BOOL_VALUES=['use_google_cache', 'smtptls', 'load_full_jobs', 'load_all_new_pages', 'attach_jobs_description']
+JSON_VALUES=['mailto']
+INT_VALUES=['smtpport', 'workers']
 
 class ConfigurationFile(collections.UserDict):
     '''Build config dict from file.  Parse the config file(s) and return dict config.  
@@ -108,17 +139,15 @@ class ConfigurationFile(collections.UserDict):
         for scraper in self.data:
             for config_option in self.data[scraper]:
                 # List of BOOL config values
-                if config_option in ['use_google_cache', 'smtptls', 'load_full_jobs', 'load_all_new_pages', 'attach_jobs_description']:
+                if config_option in BOOL_VALUES:
                     self.data[scraper][config_option]=getbool(self.parser, scraper, config_option)
                 # list of JSON config values
-                if config_option in ['mailto']:
+                if config_option in JSON_VALUES:
                     self.data[scraper][config_option]=getjson(self.parser, scraper, config_option)
                 # List of INT config values
-                if config_option in ['smtpport', 'workers']:
+                if config_option in INT_VALUES:
                     self.data[scraper][config_option]=getint(self.parser, scraper, config_option)
 
-
-    
 def getjson(conf, section, key):
     '''Return json loaded structure from a configparser object. Empty list if the loaded value is null.   
     Arguments:  

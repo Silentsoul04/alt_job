@@ -16,6 +16,7 @@ from string import Template
 from .utils import get_valid_filename, log
 from .utils import get_xlsx_file_bytes
 from .jobs import Job
+from .__version__ import __version__
 
 # Date format used everywhere
 DATE_FORMAT='%Y-%m-%dT%H-%M-%S'
@@ -94,7 +95,7 @@ class MailSender():
 
         message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Good luck!</p>'
 
-        message = self.TEMPLATE_EMAIL.substitute(content=message)
+        message = self.TEMPLATE_EMAIL.substitute(content=message, alt_job_version=__version__)
         return message
 
     TEMPLATE_EMAIL=Template("""
@@ -230,7 +231,7 @@ class MailSender():
               <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                 <tr>
                   <td class="content-block powered-by" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 12px; color: #999999; text-align: center;">
-                    Powered by open source software: <a href="https://github.com/tristanlatr/alt_job" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;">Alt Job</a>.
+                    Powered by open source software, <br /> <a href="https://github.com/tristanlatr/alt_job" style="color: #999999; font-size: 13px; text-align: center; text-decoration: none;">Alt Job version $alt_job_version </a>
                   </td>
                 </tr>
               </table>

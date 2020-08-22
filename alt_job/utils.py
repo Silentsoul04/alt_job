@@ -77,7 +77,6 @@ def get_xlsx_file(items, headers=None):
 
     Return excel file as tempfile.NamedTemporaryFile
     """
-    log.info("Making Excel file...")
     with tempfile.NamedTemporaryFile(delete=False) as excel_file:
         with xlsxwriter.Workbook(excel_file.name) as workbook:
             if not headers:

@@ -27,3 +27,5 @@ class TorMiddleware(object):
 #             new_url = 'https://webcache.googleusercontent.com/search?q=cache:' + request.url
 #             request = request.replace(url=new_url)
 #             return request
+
+# Could also use https://github.com/clemfromspace/scrapy-selenium
