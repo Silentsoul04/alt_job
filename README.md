@@ -25,9 +25,9 @@ Supports the following websites:
 - [chantier.qc.ca](https://chantier.qc.ca/decouvrez-leconomie-sociale/offres-demploi/): Québec  (full parsing)   
 - [goodwork.ca](https://www.goodwork.ca): Québec and Canada (full parsing, form search still TODO)  
 - [engages.ca](https://www.engages.ca): Québec (paging TODO)  
+- [enviroemplois.org](https://www.enviroemplois.org): Québec (full parsing)  
 
 The support of the following websites is on the TODO: 
-- [enviroemplois.org](https://www.enviroemplois.org): Québec
 - [charityvillage.com](https://charityvillage.com): Québec and Canada    
 
 ### Install
