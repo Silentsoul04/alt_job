@@ -103,7 +103,7 @@ class ConfigurationFile(collections.UserDict):
                        raise ValueError("Could not read config %s. Make sure the file exists and you have correct access right."%(f)) from err
         
         self.data=copy.deepcopy(self.parser._sections)
-
+        self.data['alt_job']['config_file']=self.files
         # casting int, booleans and json data sctructure
         for scraper in self.data:
             for config_option in self.data[scraper]:
