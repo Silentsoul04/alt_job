@@ -3,7 +3,7 @@ import collections
 import os
 import json
 import copy
-from . import parse_timedelta, log
+from .utils import parse_timedelta, log
 
 # Configuration handling -------------------------------------------------------
 class JobsConfig(collections.UserDict):
@@ -47,7 +47,7 @@ class JobsConfig(collections.UserDict):
                 if config_option in ['mailto']:
                     self.data[scraper][config_option]=getjson(self.parser, scraper, config_option)
                 # List of integer config values
-                if config_option in ['smtpport']:
+                if config_option in ['smtpport', 'workers']:
                     self.data[scraper][config_option]=getint(self.parser, scraper, config_option)
     
 def getjson(conf, section, key):
@@ -148,7 +148,8 @@ DEFAULT_CONFIG={
     'alt_job':{
         'log_level':'INFO',
         'scrapy_log_level':'ERROR',
-        'jobs_datafile':''
+        'jobs_datafile':'',
+        'workers':20
     },
 
     'mail_sender':{

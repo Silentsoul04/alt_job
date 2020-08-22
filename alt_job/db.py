@@ -57,8 +57,8 @@ class JsonDataBase():
         return jobs
 
     def update_and_write_jobs(self, job_list=None):
-        '''Update the sites that have been scanned based on the report list.  
-        Keep same report order add append new sites at the bottom.  '''
+        '''Update the jobs that have been scraped based on job_list.  
+        Keep same report order add append new jobs at the bottom.  '''
         if not job_list: return
         if self.filepath=='null': return
         

@@ -1,15 +1,19 @@
-import argparse
+import sys
+if sys.version_info[0] < 3: 
+    print("Sorry, you must use Python 3")
+    sys.exit(1)
 
+import argparse
 import json
 import multiprocessing
 
-from alt_job.__version__ import __version__
-from alt_job.config import JobsConfig, TEMPLATE_FILE
-from alt_job.db import  JsonDataBase
-from alt_job.mail import MailSender
-from alt_job.jobs import Job
-import alt_job.scrape
-from alt_job import log, init_log
+from .__version__ import __version__
+from .scrape import scrape, get_all_scrapers
+from .config import JobsConfig, TEMPLATE_FILE
+from .db import  JsonDataBase
+from .mail import MailSender
+from .jobs import Job
+from .utils import log, init_log, perform
 
 class AlternativeJob(object):
 
@@ -43,22 +47,25 @@ class AlternativeJob(object):
         else:
             self.db=JsonDataBase()
 
+        # Run all scrapers asynchronously
         scraped_data=[]
+        returned_data=perform(self.process_scrape,
+            [ w for w in get_all_scrapers() if w in self.config ], 
+            asynch=True, workers=self.config['alt_job']['workers'] )
 
-        for website in alt_job.scrape.get_all_scrapers():
-            if website in self.config: 
-                scraped_jobs=self.process_scrape(website)
-                scraped_data.extend(scraped_jobs)
+        # returned_data is a list of lists
+        for scraped_jobs in returned_data:
+            scraped_data.extend(scraped_jobs)
 
+        # Determine all NEW jobs
         new_jobs = [ Job(job) for job in scraped_data if not self.db.find_job(job) ]
-
         older_jobs = [ c for c in scraped_data if c not in new_jobs ]
         
         log.debug('Older jobs are\n{}'.format('\n'.join([ str(j['title'])+'\n - URL: '+str(j['url']) for j in older_jobs ])))
-
         log.debug('New jobs are\n{}'.format('\n'.join([ str(j['title'])+'\n - URL: '+str(j['url']) for j in new_jobs ] or ['None'])))
 
-        self.db.update_and_write_jobs(new_jobs)
+        # Write all jobs to database
+        self.db.update_and_write_jobs(older_jobs+new_jobs)
 
         log.info('Jobs write to file: {}'.format(self.db.filepath))
 
@@ -66,10 +73,12 @@ class AlternativeJob(object):
             mail=MailSender(**self.config['mail_sender'])
             log.info('Sending email digest')
             mail.send_mail_alert(new_jobs)
+        else:
+            log.info("No new jobs, not sending email")
 
     def process_scrape(self, website):
         scraped_data_result=multiprocessing.Manager().list()
-        process = multiprocessing.Process(target=alt_job.scrape.scrape,
+        process = multiprocessing.Process(target=scrape,
             kwargs=dict(website=website,
                 scraper_config=self.config[website],
                 db=self.db,

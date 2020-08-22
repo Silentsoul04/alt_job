@@ -3,7 +3,7 @@ import tempfile
 from scrapy.crawler import CrawlerProcess
 from scrapy import spiderloader
 import scrapy.settings
-from alt_job import log
+from .utils import log
 
 def get_all_scrapers():
     spider_loader = spiderloader.SpiderLoader(settings=scrapy.settings.Settings(values={"SPIDER_MODULES":"alt_job.scrapers"}))
@@ -22,7 +22,7 @@ def scrape(website, scraper_config, log_level, scraped_data_result, db=None):
                 },
             },
             "LOG_LEVEL":log_level,
-            "DOWNLOAD_DELAY":1,
+            "DOWNLOAD_DELAY":3,
             "COOKIES_ENABLED":False,
             "SPIDER_MODULES":"alt_job.scrapers",
             "ITEM_PIPELINES": {

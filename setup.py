@@ -23,7 +23,7 @@ setup(
     url='https://github.com/tristanlatr/alt_job',
     maintainer='tristanlatr',
     version=version['__version__'],
-    packages=['alt_job',],
+    packages=['alt_job','alt_job.scrapers'],
     install_requires=[
           'scrapy', 'bs4', 'XlsxWriter', 'scrapy-user-agents'
     ],

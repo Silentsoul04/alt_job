@@ -1,10 +1,10 @@
 import scrapy
 import urllib
 from bs4 import BeautifulSoup
-import alt_job.scrapers
-from alt_job.jobs import Job
+from .base import Scraper
+from ..jobs import Job
 
-class Scraper_goodwork_ca(alt_job.scrapers.Scraper):
+class Scraper_goodwork_ca(Scraper):
     name = "goodwork.ca"
     allowed_domains = ["webcache.googleusercontent.com", name]
 

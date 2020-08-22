@@ -17,9 +17,9 @@ This Python module is build on top of [Scrapy](https://scrapy.org). If you don't
 **Writing a new scraper**
 
 The only thing you have to do to support a new website is to drop the the new scraper file in `alt_job/scrapers/` folder.  
-The new Scraper must extend `alt_job.scrapers.Scraper` which extends `scrapy.Spider`.  
-Read carefully the [template Scraper class](https://github.com/tristanlatr/alt_job/blob/master/alt_job/scrapers/__init__.py).  
-Fork the repo, hack hack hack and Pull request.  
+The new Scraper must extend `alt_job.scrapers.base.Scraper` which extends `scrapy.Spider`.  
+Read carefully the [base Scraper class](https://github.com/tristanlatr/alt_job/blob/master/alt_job/scrapers/base.py).  
+Fork the repo, hack hack hack and pull request.  
 
 Easy !
 
@@ -27,10 +27,10 @@ Easy !
 
 ```python
 from bs4 import BeautifulSoup
-import alt_job.scrapers
-from alt_job.jobs import Job
+from . import Scraper
+from ..jobs import Job
 
-class Scraper_arrondissement_com(alt_job.scrapers.Scraper):
+class Scraper_arrondissement_com(Scraper):
     name = "arrondissement.com"
     allowed_domains = ["webcache.googleusercontent.com", name]
     
@@ -57,5 +57,3 @@ class Scraper_arrondissement_com(alt_job.scrapers.Scraper):
     def get_next_page_url(self, response):
         return response.xpath('//table[contains(@class,"pager-nav")]//tr/td[last()]/a/@href').get()
 ```
-
-

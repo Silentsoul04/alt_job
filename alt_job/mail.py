@@ -13,10 +13,9 @@ import io
 import scrapy.mail
 import datetime
 from string import Template
-from alt_job import get_valid_filename
-from alt_job import log
-from alt_job.jobs import Job
-from alt_job.xlsx import get_xlsx_file
+from .utils import get_valid_filename, log
+from .utils import get_xlsx_file_bytes
+from .jobs import Job
 
 # Date format used everywhere
 DATE_FORMAT='%Y-%m-%dT%H-%M-%S'
@@ -58,7 +57,7 @@ class MailSender():
         #         message.attach(attachment)
 
         # Attach excel file
-        attachment=MIMEApplication(get_xlsx_file(items=jobs), Name=get_valid_filename(message['Subject'])+'.xlsx')
+        attachment=MIMEApplication(get_xlsx_file_bytes(items=jobs), Name=get_valid_filename(message['Subject'])+'.xlsx')
         attachment.add_header("Content-Disposition", "attachment; filename={}".format(get_valid_filename(message['Subject'])+'.xlsx'))
         message.attach(attachment)
 
