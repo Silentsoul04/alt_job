@@ -11,8 +11,8 @@ This project is still under construction! 🚧
 
 Implementation of this software
 
--  Montréal:  
-[alt_job_mtl](https://lists.riseup.net/www/arc/alt_job_mtl) mailling list to receive a daily digest of new Montréal job postings. To subscribe, send an email to alt_job_mtl-subscribe@lists.riseup.net and validate your subscription.  
+-  Montréal / Québec:  
+[alt_job_mtl](https://lists.riseup.net/www/arc/alt_job_mtl) mailling list to receive a daily digest of new Montréal and Province of Québec job postings (some postings cannot be filtered). To subscribe, send an email to alt_job_mtl-subscribe@lists.riseup.net and validate your subscription.  
 
 ### Supported websites
 
@@ -71,4 +71,9 @@ url=https://chantier.qc.ca/decouvrez-leconomie-sociale/offres-demploi
 
 [engages.ca]
 url=https://www.engages.ca/emplois?search%5Bkeyword%5D=&search%5Bjob_sector%5D=&search%5Bjob_city%5D=Montr%C3%A9al
+```
+
+### Run it
+```bash
+python3 -m alt_job -c /home/user/Jobs/alt_job.conf
 ```
