@@ -36,7 +36,7 @@ class MailSender():
 
     def send_mail_alert(self, jobs):
         '''Sending the report'''
-        date = datetime.datetime.now().isoformat(timespec='minutes')
+        date = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         # Building message
         message = MIMEMultipart("html")
         message['Subject'] = 'New job postings - {}'.format(date)
