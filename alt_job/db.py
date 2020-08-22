@@ -40,7 +40,7 @@ class JsonDataBase():
         jobs=[]
         if os.path.isfile(filepath):
             try:
-                with open(filepath, 'r') as jobs_fd:
+                with open(filepath, 'r', encoding='utf-8') as jobs_fd:
                     jobs=json.load(jobs_fd)
                 print("Load jobs database: %s"%filepath)
             except Exception:
@@ -48,7 +48,7 @@ class JsonDataBase():
                 db_back= filepath+'.error{}'.format(datetime.datetime.now())
                 copyfile(filepath, db_back)
                 print("Your DB backup is {}".format(db_back))
-                with open(filepath, 'w') as out:
+                with open(filepath, 'w', encoding='utf-8') as out:
                     out.write('[]')
                 return self.build_jobs(filepath)
 
@@ -77,7 +77,7 @@ class JsonDataBase():
         while job_file_write_lock.locked():
             time.sleep(0.01)
         job_file_write_lock.acquire()
-        with open(self.filepath,'w') as jobs_fd:
+        with open(self.filepath,'w', encoding='utf-8') as jobs_fd:
             json.dump(self._data, jobs_fd, indent=4)
             job_file_write_lock.release()
 
