@@ -12,7 +12,7 @@ HERE = pathlib.Path(__file__).parent
 
 #Version of the project
 version = {}
-exec((HERE / "alt_job" / "__version__.py").read_text(), version)
+exec((HERE / "alt_job" / "__version__.py").read_text(encoding='utf-8'), version)
 
 # The text of the README file
 README = (HERE / "README.md").read_text()
