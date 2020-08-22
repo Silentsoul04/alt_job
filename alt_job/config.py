@@ -4,9 +4,76 @@ import os
 import json
 import copy
 from .utils import parse_timedelta, log
+import argparse
 
-# Configuration handling -------------------------------------------------------
-class JobsConfig(collections.UserDict):
+# Configuration handling
+class AltJobConfigArgParseOptions(collections.UserDict):
+    def __init__(self):
+        # overwriting arguments
+        parser1 = argparse.ArgumentParser(
+             # Turn off help, so we print all options in response to -h
+            add_help=False)
+
+        # CLI only arguments
+        parser1.add_argument('-c','--config_file', help='configuration file(s)', metavar='<File path>', nargs='+')
+        parser1.add_argument('-t','--template_conf', action='store_true', help='print a template config file and exit. ')
+        parser1.add_argument('-V','--version', action='store_true', help='print Alt Job version and exit. ')
+
+        args1, remaining_argv = parser1.parse_known_args()
+
+        if args1.config_file:
+            config_file = ConfigurationFile(files=args1.config_file)
+        else:
+            config_file = ConfigurationFile()
+        
+        # Determine the default arguments
+        defaults_args=config_file['alt_job']
+
+        # Parse rest of arguments
+        # Don't suppress add_help here so it will handle -h
+        parser2 = argparse.ArgumentParser(
+            # Inherit options from config_parser
+            parents=[parser1],
+            description="""Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email.""",
+            prog='python3 -m alt_job', formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+            )
+        parser2.set_defaults(**defaults_args)
+
+        # Arguments that overwrites [alt_job] config values
+        parser2.add_argument("--log_level", metavar='<String>', help='Alt job log level. Exemple: DEBUG')
+        parser2.add_argument("--scrapy_log_level", metavar='<String>', help='Scrapy log level. Exemple: DEBUG')
+        parser2.add_argument("--jobs_datafile", metavar='<File path>',help='JSON file to store the jobs data')
+        parser2.add_argument("--workers", metavar='<Number>', help="Number of asynchronous workers", type=int)
+        args2 = parser2.parse_args(remaining_argv)
+        
+        # Update 'alt_job' section witll all parsed arguments
+        config_file['alt_job'].update(vars(args2))
+        config_file['alt_job'].update(vars(args1))
+
+        self.data=config_file
+
+# Config default values
+DEFAULT_CONFIG={
+    'alt_job':{
+        'log_level':'INFO',
+        'scrapy_log_level':'ERROR',
+        'jobs_datafile':'',
+        'workers':5
+    },
+
+    'mail_sender':{
+        'smtphost':'',
+        'mailfrom':'',
+        'smtpuser':'',
+        'smtppass':'',
+        'smtpport':'587',
+        'smtptls':'Yes',
+        'mailto':'[]'
+    }
+
+}
+
+class ConfigurationFile(collections.UserDict):
     '''Build config dict from file.  Parse the config file(s) and return dict config.  
         Return a tuple (config dict, read files list).  
         The dict returned contain all possible config values. Default values are applied if not specified in the file(s) or string.
@@ -40,15 +107,17 @@ class JobsConfig(collections.UserDict):
         # casting int, booleans and json data sctructure
         for scraper in self.data:
             for config_option in self.data[scraper]:
-                # List of booleans config values
+                # List of BOOL config values
                 if config_option in ['use_google_cache', 'smtptls', 'load_full_jobs', 'load_all_new_pages', 'attach_jobs_description']:
                     self.data[scraper][config_option]=getbool(self.parser, scraper, config_option)
-                # list of json config values
+                # list of JSON config values
                 if config_option in ['mailto']:
                     self.data[scraper][config_option]=getjson(self.parser, scraper, config_option)
-                # List of integer config values
+                # List of INT config values
                 if config_option in ['smtpport', 'workers']:
                     self.data[scraper][config_option]=getint(self.parser, scraper, config_option)
+
+
     
 def getjson(conf, section, key):
     '''Return json loaded structure from a configparser object. Empty list if the loaded value is null.   
@@ -88,80 +157,72 @@ def getint(conf, section, key):
         raise ValueError("Could not read int value in config file for key '{}' and string '{}'. Must be an integer".format(key, conf.get(section,key))) from err
 
 # Configuration template -------------------------
-TEMPLATE_FILE="""[alt_job]
+TEMPLATE_FILE="""
+
+[alt_job]
+
+##### General config #####
+
+# Logging
 log_level=INFO
-scrapy_log_level=WARNING
-# jobs_datafile=/home/user/data/jobs.json
+scrapy_log_level=ERROR
+
+# Jobs data file, default is ~/jobs.json
+# jobs_datafile=/home/user/Jobs/jobs-mtl.json
+
+# Asynchronous workers, number of site to scan at the same time
+# Default to 5.
+# workers=10
 
 [mail_sender]
+
+##### Mail sender #####
+
 # Email server settings
 smtphost=smtp.gmail.com
-mailfrom=user@gmail.com
-smtpuser=user@gmail.com
-smtppass=p@assw0rd
+mailfrom=you@gmail.com
+smtpuser=you@gmail.com
+smtppass=password
 smtpport=587
 smtptls=Yes
 
 # Email notif settings
+mailto=["you@gmail.com"]
 
-mailto=["user@gmail.com"]
+##### Scrapers #####
 
-# Scrapers 
+# Scraper name
+[goodwork.ca]
+# URL to start the scraping, required for all scrapers
+url=https://www.goodwork.ca/jobs.php?prov=QC
+
+[cdeacf.ca]
+url=http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi
+
+# Load all jobs: If supported by the scraper,
+#   this will follow each job posting link in listing and parse full job description.
+# Default to True!
+load_all_jobs=False
 
 [arrondissement.com]
 url=https://www.arrondissement.com/tout-list-emplois/
-load_full_jobs=True
-load_all_new_pages=True
 
-[cdeacf.ca]
-url=http://cdeacf.ca/recherches?f[0]=type:offre_demploi
-load_full_jobs=False
+# Load all new pages: If supported by the scraper,
+#   this will follow each "next page" links and parse next listing page
+#   until older (in database) job postings are found.
+# Default to True!
 load_all_new_pages=False
 
 [chantier.qc.ca]
 url=https://chantier.qc.ca/decouvrez-leconomie-sociale/offres-demploi
-load_full_jobs=False
+# Special case of chantier.qc.ca wich does not have paging
 load_all_new_pages=False
 
-[charityvillage.com]
-url=
-load_full_jobs=False
-load_all_new_pages=True
+# Disabled scraper
+# [engages.ca]
+# url=https://www.engages.ca/emplois?search%5Bkeyword%5D=&search%5Bjob_sector%5D=&search%5Bjob_city%5D=Montr%C3%A9al
 
-[engages.ca]
-url=https://www.engages.ca/emplois?search%5Bkeyword%5D=&search%5Bjob_sector%5D=&search%5Bjob_city%5D=Montr%C3%A9al
-load_full_jobs=False
-
-[goodwork.ca]
-url=https://www.goodwork.ca/jobs.php?prov=QC
-load_full_jobs=False
-
-[enviroemplois.org]
-url=
-load_full_jobs=False
-load_all_new_pages=False
 """
-
-# Config default values
-#TODO
-DEFAULT_CONFIG={
-    'alt_job':{
-        'log_level':'INFO',
-        'scrapy_log_level':'ERROR',
-        'jobs_datafile':''
-    },
-
-    'mail_sender':{
-        'smtphost':'',
-        'mailfrom':'',
-        'smtpuser':'',
-        'smtppass':'',
-        'smtpport':'587',
-        'smtptls':'Yes'
-    }
-
-}
-
 
 def find_files(env_location, potential_files, default_content="", create=False):
     '''Find existent files based on folders name and file names.  

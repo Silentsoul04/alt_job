@@ -22,3 +22,7 @@ class AddKeywordMatchesPipeline(object):
         item['keywords_matched'] = [m for m in self.matches if m in item.get_text()]
         
         return item
+
+    # TODO explore ways to use natural language processing to dig out most relevent keywords
+    #   https://github.com/danielgulloa/jobMatch
+    #   https://github.com/2dubs/Job-Skills-Extraction

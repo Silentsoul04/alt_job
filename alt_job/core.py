@@ -4,7 +4,7 @@ import multiprocessing
 
 from .__version__ import __version__
 from .scrape import scrape, get_all_scrapers
-from .config import JobsConfig, TEMPLATE_FILE
+from .config import AltJobConfigArgParseOptions, TEMPLATE_FILE
 from .db import  JsonDataBase
 from .mail import MailSender
 from .jobs import Job
@@ -14,23 +14,16 @@ class AltJob(object):
 
     def __init__(self):
 
-        exit_code=0
-        self.__dict__.update(vars(self.parse_args()))
+        self.config=AltJobConfigArgParseOptions()
 
-        if self.version:
+        if self.config['alt_job']['version'] :
             self.print_version()
             exit(0)
 
-        if self.template_conf:
+        if self.config['alt_job']['template_conf']:
             print(TEMPLATE_FILE)
             exit(0)
 
-        # init config 
-        self.config=None
-        if self.config_file:
-            self.config = JobsConfig(files=self.config_file)
-        else:
-            self.config = JobsConfig()
         init_log(self.config['alt_job']['log_level'])
 
         self.print_version()
@@ -98,14 +91,7 @@ class AltJob(object):
         scraped_data_result=list(scraped_data_result)
         return scraped_data_result
 
-    @staticmethod
-    def parse_args():
-        parser = argparse.ArgumentParser(description="""Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email.""", prog='python3 -m alt_job', formatter_class=argparse.RawDescriptionHelpFormatter)
-
-        parser.add_argument('-c','--config_file', help='configuration file(s)', metavar='<File path>', nargs='+')
-        parser.add_argument('-t','--template_conf', action='store_true', help='print a template config file and exit. ')
-        parser.add_argument('-V','--version', action='store_true', help='print Alt Job version and exit. ')
-        return parser.parse_args()
+    
 
     def print_version(self):
         print('Alt Job version {}'.format(__version__))

@@ -29,6 +29,13 @@ class Scraper_goodwork_ca(Scraper):
                 job_dict['date_posted']=d_splited[1]
         return Job(job_dict)
 
+    def get_next_page_url(self, response):
+        next_link=[a.xpath('@href').get() for a in response.xpath('//*[@id="page"]/p/a') if 'Next' in a.css('::text').get() ]
+        if len(next_link)==1:
+            return urllib.parse.urljoin('http://goodwork.ca/', next_link[0])
+        else:
+            return None
+
     # TODO parse search form: http://fr.goodwork.ca/search
     # Add theme, province, city/town(s), country, job type, other options, keyword 
     # As config [goodwork.ca] values

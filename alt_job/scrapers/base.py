@@ -4,6 +4,12 @@ import scrapy
 from ..jobs import Job
 from ..utils import log
 
+"""
+Other scrapers TODO:
+"undpjobs.net": https://undpjobs.net/country/Canada
+
+"""
+
 class Scraper(abc.ABC, scrapy.Spider):
     """
     Base class for all scrapers.  
@@ -16,7 +22,6 @@ class Scraper(abc.ABC, scrapy.Spider):
     # Sub classes must overwrite the 'name' and 'allowed_domains' constant
     # All supported domains
     allowed_domains = ["webcache.googleusercontent.com"]
-    
 
     # TODO use google cache by default and retry request with real site if website snapshot is older than X hours
     def start_requests(self):
@@ -46,14 +51,19 @@ class Scraper(abc.ABC, scrapy.Spider):
             # At least url, title data is loaded from the list of job posting ...
             job_dict=self.get_job_dict(div)
             if not job_dict['url'] or not job_dict['title'] :
-                raise ValueError("Could not find valid job information ('url' and 'title') in data:\n"+str(div.get())+"\nScraped infos:\n"+str(job_dict)+"\nReport this issue on github!")
+                raise ValueError( "Could not find valid job information ('url' and 'title') in data:\n" + 
+                        str(div.get()) + "\nScraped infos:\n" + str(job_dict) + "\nReport this issue on github!" )
+            
             # Store source as the name of the spider aka website
             job_dict['source']=self.name
             page_jobs.append(job_dict)
-            # Load job page only if:
-            # it's a new job (not in database)
-            # and load_full_jobs=Yes
-            # and the method parse_full_job_page() has been re-wrote by the Scraper subclass
+            
+            """
+            Load full job page only if:
+            - it's a new job (not in database)
+            - load_full_jobs=Yes
+            - the method parse_full_job_page() has been re-wrote by the Scraper subclass
+            """
             if ( (not self.db or self.db.find_job(job_dict)==None)
                 and self.load_full_jobs ):
                 if type(self).parse_full_job_page != Scraper.parse_full_job_page:
@@ -70,11 +80,13 @@ class Scraper(abc.ABC, scrapy.Spider):
 
         if self.load_full_jobs and type(self).parse_full_job_page == Scraper.parse_full_job_page:
             print("Scraper {} does not support load_full_jobs=True, some informations might be missing".format(self.name))
-        
-        # If all page jobs are new and 
-        # The method get_next_page_url() has been re-wrote by the Scraper subclass
-        # Scrape next page
-        # print("Scraper info: {}".format(self.__dict__))
+       
+        """
+        If all page jobs are new and 
+        The method get_next_page_url() has been re-wrote by the Scraper subclass
+        Scrape next page
+        """
+        print("Scraper info: {}".format(self.__dict__))
         if self.load_all_new_pages==True:
             if self.db and any( [self.db.find_job(job_dict)!=None for job_dict in page_jobs] ):
                 # print("All new job postings loaded")
@@ -126,8 +138,8 @@ class Scraper(abc.ABC, scrapy.Spider):
         Arguments:  
         - response: scrapy response object for the job page 
         - job_dict: dict containing job raw data,  
-            this function must return a new Job() with this  
-            data and any other relevant info from url  
+            this function must return a new Job() FROM this  
+            data and any other relevant info from the job page  
 
         This method is called by `Scraper.parse()` method if load_full_jobs==True  
         Must return a Job()  
