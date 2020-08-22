@@ -40,7 +40,7 @@ def scrape(website, scraper_config, log_level, scraped_data_result=None, db=None
         process.crawl(website, **scraper_config, db=db)
         process.start()
         
-        with open(scrapy_process_temp_file.name, 'r', encoding='uft-8') as crawler_process_json_fp:
+        with open(scrapy_process_temp_file.name, 'r', encoding='utf-8') as crawler_process_json_fp:
             try:
                 scrapy_process_json_data=json.load(crawler_process_json_fp)
                 # write result in argument's list, used with multiprocessing
