@@ -15,7 +15,7 @@ version = {}
 exec((HERE / "alt_job" / "__version__.py").read_text(encoding='utf-8'), version)
 
 # The text of the README file
-README = (HERE / "README.md").read_text()
+README = (HERE / "README.md").read_text(encoding='utf-8')
 
 setup(
     name='alt_job',
