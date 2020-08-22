@@ -24,7 +24,8 @@ DATE_FORMAT='%Y-%m-%dT%H-%M-%S'
 class MailSender():
     '''Send jobs alerts'''
 
-    def __init__(self, smtphost, mailfrom, smtpuser, smtppass, smtpport, smtptls, mailto):
+    # *arg, **kwargs currently ignored
+    def __init__(self, smtphost, mailfrom, smtpuser, smtppass, smtpport, smtptls, mailto, *arg, **kwargs):
         if not isinstance(mailto, list):
             raise TypeError('mailto must be a list, not '+str(type(mailto)))
         self.smtphost=smtphost

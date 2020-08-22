@@ -8,7 +8,7 @@ from .scrape import get_all_scrapers
 import argparse
 
 # Configuration handling
-class AltJobConfigArgParseOptions(collections.UserDict):
+class AltJobOptions(collections.UserDict):
     """
     Wrap argparse and configparser objects into one configuration dict object
     """
@@ -19,7 +19,7 @@ class AltJobConfigArgParseOptions(collections.UserDict):
             add_help=False)
 
         # CLI only arguments
-        parser1.add_argument('-c','--config_file', help='configuration file(s)', metavar='<File path>', nargs='+')
+        parser1.add_argument('-c','--config_file', help='configuration file(s). Default locations will be checked and loaded if file exists: `~/.alt_job/alt_job.conf`, `~/alt_job.conf` or `./alt_job.conf`', metavar='<File path>', nargs='+')
         parser1.add_argument('-t','--template_conf', action='store_true', help='print a template config file and exit. ')
         parser1.add_argument('-V','--version', action='store_true', help='print Alt Job version and exit. ')
 
@@ -56,13 +56,11 @@ class AltJobConfigArgParseOptions(collections.UserDict):
         parser2.add_argument("--workers", metavar='<Number>', help="Number of websites to scrape asynchronously", type=int)
         parser2.add_argument("--quick", "--no_load_full_jobs", action='store_true', help='Do not load the full job description page and parse additionnal data. This settings is applied to all scrapers')
         parser2.add_argument("--first_page_only", "--no_load_all_new_pages", action='store_true', help='Do not load new job listing pages until older jobs are found. This settings is applied to all scrapers')
+        parser2.add_argument("--mailto", metavar="<Email>", help='Emails to notify of new job postings', nargs='+')
         parser2.add_argument("--log_level", metavar='<String>', help='Alt job log level. Exemple: DEBUG')
         parser2.add_argument("--scrapy_log_level", metavar='<String>', help='Scrapy log level. Exemple: DEBUG')
         
         args2 = parser2.parse_args(remaining_argv)
-        
-        # config_file['alt_job'].update({k:v for (k,v) in vars(args1).items() if v!=None})
-        # config_file['alt_job'].update({k:v for (k,v) in vars(args2).items() if v!=None})
 
         # Update 'alt_job' section witll all parsed arguments
         config_file['alt_job'].update(vars(args2))
@@ -86,10 +84,6 @@ DEFAULT_CONFIG={
         'scrapy_log_level':'ERROR',
         'jobs_datafile':'',
         'workers':5,
-        'xlsx_output':''
-    },
-
-    'mail_sender':{
         'smtphost':'',
         'mailfrom':'',
         'smtpuser':'',
@@ -202,8 +196,6 @@ scrapy_log_level=ERROR
 # Asynchronous workers, number of site to scan at the same time
 # Default to 5.
 # workers=10
-
-[mail_sender]
 
 ##### Mail sender #####
 

@@ -108,3 +108,55 @@ load_all_new_pages=False
 ```bash
 python3 -m alt_job -c /home/user/Jobs/alt_job.conf
 ```
+
+### Help
+```bash
+% python3 -m alt_job -h
+usage: python3 -m alt_job [-h] [-c <File path> [<File path> ...]] [-t] [-V]
+                          [-x <File path>]
+                          [--enabled_scrapers <Website> [<Website> ...]]
+                          [--jobs_datafile <File path>] [--workers <Number>]
+                          [--quick] [--first_page_only]
+                          [--mailto <Email> [<Email> ...]]
+                          [--log_level <String>] [--scrapy_log_level <String>]
+
+Atl Job scrapes a bunch of green/social/alternative websites to send digest of
+new job posting by email.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c <File path> [<File path> ...], --config_file <File path> [<File path> ...]
+                        configuration file(s). Default locations will be
+                        checked and loaded if file exists:
+                        `~/.alt_job/alt_job.conf`, `~/alt_job.conf` or
+                        `./alt_job.conf` (default: [])
+  -t, --template_conf   print a template config file and exit. (default:
+                        False)
+  -V, --version         print Alt Job version and exit. (default: False)
+  -x <File path>, --xlsx_output <File path>
+                        Write all NEW jobs to Excel file (default: None)
+  --enabled_scrapers <Website> [<Website> ...]
+                        List of enabled scrapers. By default it's all scrapers
+                        configured in config file(s) (default: [])
+  --jobs_datafile <File path>
+                        JSON file to store ALL jobs data. Default is
+                        '~/jobs.json'. Use 'null' keyword to disable the
+                        storage of the datafile, all jobs will be considered
+                        as new and will be loaded (default: )
+  --workers <Number>    Number of websites to scrape asynchronously (default:
+                        5)
+  --quick, --no_load_full_jobs
+                        Do not load the full job description page and parse
+                        additionnal data. This settings is applied to all
+                        scrapers (default: False)
+  --first_page_only, --no_load_all_new_pages
+                        Do not load new job listing pages until older jobs are
+                        found. This settings is applied to all scrapers
+                        (default: False)
+  --mailto <Email> [<Email> ...]
+                        Emails to notify of new job postings (default: [])
+  --log_level <String>  Alt job log level. Exemple: DEBUG (default: INFO)
+  --scrapy_log_level <String>
+                        Scrapy log level. Exemple: DEBUG (default: ERROR)
+
+```

@@ -29,10 +29,10 @@ class JsonDataBase():
                 print("Could not write jobs database: {}".format(self.filepath))
                 raise
 
-    def find_jobs_file(self, create=False, daemon=False):
+    def find_jobs_file(self, create=False):
         files=[DEFAULT_JOBS_FILE]
         env=['HOME', 'PWD', 'XDG_CONFIG_HOME', 'APPDATA']
-        return(find_files(env, files, "[]", create=True)[0])
+        return(find_files(env, files, "[]", create=create)[0])
 
     # Read jobs database
     def build_jobs(self, filepath):

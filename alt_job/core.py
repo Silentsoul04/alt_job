@@ -4,7 +4,7 @@ import multiprocessing
 from shutil import copyfile
 from .__version__ import __version__
 from .scrape import scrape, get_all_scrapers
-from .config import AltJobConfigArgParseOptions, TEMPLATE_FILE
+from .config import AltJobOptions, TEMPLATE_FILE
 from .db import  JsonDataBase
 from .mail import MailSender
 from .jobs import Job
@@ -14,7 +14,7 @@ class AltJob(object):
 
     def __init__(self):
 
-        self.config=AltJobConfigArgParseOptions()
+        self.config=AltJobOptions()
 
         if self.config['alt_job']['version'] :
             self.print_version()
@@ -79,10 +79,11 @@ class AltJob(object):
             log.info("XLSX file wrote at {}".format(self.config['alt_job']['xlsx_output']))
 
         if new_jobs:
-            if self.config['mail_sender']['smtphost']:
-                mail=MailSender(**self.config['mail_sender'])
+            if self.config['alt_job']['smtphost']:
+                mail=MailSender(**self.config['alt_job'])
                 mail.send_mail_alert(new_jobs)
-            log.info("[mail_sender] not configured, not sending email")
+            else:
+                log.info("'smtphost' not configured, not sending email")
         else:
             log.info("No new jobs, not sending email")
 
