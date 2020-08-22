@@ -1,6 +1,6 @@
 # Alt Job
   
-Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email.  Alt Job in an extensible way, only 
+Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email.  
 
 The digest include a Excel file all job postings data.   
 The scraped data include: job title, type, salary, week_hours, date posted, apply before date and full description.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens)) 
@@ -16,13 +16,14 @@ Implementation of this software
 
 ### Supported websites
 
+Alt Job is wrote in an extensible way, only 30 lines of code are required to write a new job posting site scraper!  
 Focused on Canada/Québec for now, please [contribute](https://github.com/tristanlatr/alt_job/blob/master/CONTRIBUTE.md) to expand the scope 🙂
 
 Supports the following websites: 
 - [arrondissement.com](https://www.arrondissement.com/montreal-list-emplois/t1/pc1/): Québec (full parsing) 
 - [cdeacf.ca](http://cdeacf.ca/recherches/offre_demploi): Québec (full job PDFs parsing) 
 - [chantier.qc.ca](https://chantier.qc.ca/decouvrez-leconomie-sociale/offres-demploi/): Québec  (full parsing)   
-- [goodwork.ca](https://www.goodwork.ca): Québec and Canada (form search still TODO, paging TODO)  
+- [goodwork.ca](https://www.goodwork.ca): Québec and Canada (full parsing, form search still TODO)  
 - [engages.ca](https://www.engages.ca): Québec (paging TODO)  
 
 The support of the following websites is on the TODO: 
