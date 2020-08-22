@@ -8,7 +8,7 @@ from .config import JobsConfig, TEMPLATE_FILE
 from .db import  JsonDataBase
 from .mail import MailSender
 from .jobs import Job
-from .utils import log, init_log
+from .utils import log, init_log, perform
 
 class AltJob(object):
 
@@ -47,13 +47,22 @@ class AltJob(object):
         if len(enabled_scrapers)>0:
             log.info("Scraping websites: {}".format(', '.join(enabled_scrapers)))
         else:
-            print("So website to scrape! Please configure at least one scraper in your config file")
+            print("No website to scrape! Please configure at least one scraper in your config file")
             exit(1)
 
         # Run all scrapers
         scraped_data=[]
-        for scraper in enabled_scrapers:
-            scraped_jobs=self.process_scrape(scraper)
+
+        # Old synchronous iteration
+        # for scraper in enabled_scrapers:
+        #     scraped_jobs=self.process_scrape(scraper)
+        #     scraped_data.extend(scraped_jobs)
+
+        returned_data=perform(self.process_scrape, enabled_scrapers, 
+            asynch=self.config['alt_job']['workers']>1, workers=self.config['alt_job']['workers'], progress=len(enabled_scrapers)>1 )
+
+        # returned_data is a list of lists
+        for scraped_jobs in returned_data:
             scraped_data.extend(scraped_jobs)
 
         # Determine all NEW jobs
