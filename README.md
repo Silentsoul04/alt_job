@@ -55,8 +55,6 @@ scrapy_log_level=ERROR
 # Default to 5.
 # workers=10
 
-[mail_sender]
-
 ##### Mail sender #####
 
 # Email server settings
@@ -113,8 +111,7 @@ python3 -m alt_job -c /home/user/Jobs/alt_job.conf
 ```bash
 % python3 -m alt_job -h
 usage: python3 -m alt_job [-h] [-c <File path> [<File path> ...]] [-t] [-V]
-                          [-x <File path>]
-                          [--enabled_scrapers <Website> [<Website> ...]]
+                          [-x <File path>] [-s <Website> [<Website> ...]]
                           [--jobs_datafile <File path>] [--workers <Number>]
                           [--quick] [--first_page_only]
                           [--mailto <Email> [<Email> ...]]
@@ -135,7 +132,7 @@ optional arguments:
   -V, --version         print Alt Job version and exit. (default: False)
   -x <File path>, --xlsx_output <File path>
                         Write all NEW jobs to Excel file (default: None)
-  --enabled_scrapers <Website> [<Website> ...]
+  -s <Website> [<Website> ...], --enabled_scrapers <Website> [<Website> ...]
                         List of enabled scrapers. By default it's all scrapers
                         configured in config file(s) (default: [])
   --jobs_datafile <File path>
@@ -145,7 +142,7 @@ optional arguments:
                         as new and will be loaded (default: )
   --workers <Number>    Number of websites to scrape asynchronously (default:
                         5)
-  --quick, --no_load_full_jobs
+  --quick, --no_load_all_jobs
                         Do not load the full job description page and parse
                         additionnal data. This settings is applied to all
                         scrapers (default: False)
@@ -158,5 +155,4 @@ optional arguments:
   --log_level <String>  Alt job log level. Exemple: DEBUG (default: INFO)
   --scrapy_log_level <String>
                         Scrapy log level. Exemple: DEBUG (default: ERROR)
-
 ```

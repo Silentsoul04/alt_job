@@ -49,12 +49,12 @@ class AltJobOptions(collections.UserDict):
 
         # Arguments that overwrites [alt_job] config values
         parser2.add_argument("-x", "--xlsx_output", metavar='<File path>', help='Write all NEW jobs to Excel file')
-        parser2.add_argument("-s","--enabled_scrapers", metavar='<Website>', help="List of enabled scrapers. By default it's all scrapers configured in config file(s)", nargs='+')
+        parser2.add_argument("-s", "--enabled_scrapers", metavar='<Website>', help="List of enabled scrapers. By default it's all scrapers configured in config file(s)", nargs='+')
         parser2.add_argument("--jobs_datafile", metavar='<File path>', 
             help="""JSON file to store ALL jobs data. Default is '~/jobs.json'. 
             Use 'null' keyword to disable the storage of the datafile, all jobs will be considered as new and will be loaded""")
         parser2.add_argument("--workers", metavar='<Number>', help="Number of websites to scrape asynchronously", type=int)
-        parser2.add_argument("--quick", "--no_load_full_jobs", action='store_true', help='Do not load the full job description page and parse additionnal data. This settings is applied to all scrapers')
+        parser2.add_argument("--quick", "--no_load_all_jobs", action='store_true', help='Do not load the full job description page to parse additionnal data (Much more faster). This settings is applied to all scrapers')
         parser2.add_argument("--first_page_only", "--no_load_all_new_pages", action='store_true', help='Do not load new job listing pages until older jobs are found. This settings is applied to all scrapers')
         parser2.add_argument("--mailto", metavar="<Email>", help='Emails to notify of new job postings', nargs='+')
         parser2.add_argument("--log_level", metavar='<String>', help='Alt job log level. Exemple: DEBUG')

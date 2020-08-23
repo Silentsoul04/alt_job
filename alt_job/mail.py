@@ -49,15 +49,6 @@ class MailSender():
 
         log.debug('Mail HTML :\n'+body)
 
-        # if self.attach_jobs_description:
-        #     for job in jobs:
-        #         file = io.BytesIO()
-        #         file.write(job.get_text().encode('utf-8'))
-        #         file.seek(0)
-        #         attachment=MIMEApplication(file.read(), Name=get_valid_filename(job['title'])+'.txt')
-        #         attachment.add_header("Content-Disposition", "attachment; filename=%s.txt"%(get_valid_filename(job['title'])))
-        #         message.attach(attachment)
-
         # Attach excel file
         attachment=MIMEApplication(get_xlsx_file_bytes(items=jobs), Name=get_valid_filename(message['Subject'])+'.xlsx')
         attachment.add_header("Content-Disposition", "attachment; filename={}".format(get_valid_filename(message['Subject'])+'.xlsx'))
