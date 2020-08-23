@@ -73,12 +73,13 @@ class AltJob(object):
         if self.db.filepath!='null':
             log.info('Jobs write to file: {}'.format(self.db.filepath))
 
-        if self.config['alt_job']['xlsx_output']:
-            file = get_xlsx_file(new_jobs)
-            copyfile(file.name, self.config['alt_job']['xlsx_output'])
-            log.info("XLSX file wrote at {}".format(self.config['alt_job']['xlsx_output']))
-
         if new_jobs:
+
+            if self.config['alt_job']['xlsx_output']:
+                file = get_xlsx_file(new_jobs)
+                copyfile(file.name, self.config['alt_job']['xlsx_output'])
+                log.info("XLSX file wrote at {}".format(self.config['alt_job']['xlsx_output']))
+            
             if self.config['alt_job']['smtphost']:
                 mail=MailSender(**self.config['alt_job'])
                 mail.send_mail_alert(new_jobs)
