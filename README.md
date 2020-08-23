@@ -2,7 +2,8 @@
   
 Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job postings by email. Also generates an Excel file with job postings informations.   
 
-The scraped data include: **job title, type, salary, week_hours, date posted, apply before date and full description**.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens)) 
+The scraped data include: **job title, type, salary, week_hours, date posted, apply before date and full description**.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens))  
+
 This project is still under construction! 🚧
 
 ### Mailling lists 🔥
@@ -32,6 +33,7 @@ The support of the following websites is on the TODO:
 ```bash
 python3 -m pip install alt_job
 ```
+Require Python >= 3.6  
 
 ### Configure
 
