@@ -28,8 +28,8 @@ SPIDER_CONTRACTS = {
 }
 
 FEEDS = {
-    'alt_jobs_feed.csv': {
-        'format': 'csv',
+    'alt_job_feed.json': {
+        'format': 'json',
         'encoding': 'utf8'
     }
 }

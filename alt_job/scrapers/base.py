@@ -16,6 +16,7 @@ class Scraper(abc.ABC, scrapy.Spider):
     # Sub classes must overwrite the 'name' and 'allowed_domains', 'start_urls' constants
     # All supported domains
     allowed_domains = ["webcache.googleusercontent.com"]
+    start_urls=[]
     # TODO use google cache by default and retry request with real site if website snapshot is older than X hours
     def start_requests(self):
         url=self.start_urls[0]
@@ -32,7 +33,6 @@ class Scraper(abc.ABC, scrapy.Spider):
         self.start_urls=[url] if url else type(self).start_urls
         self.db=db
         self.use_google_cache=use_google_cache
-
         self.load_full_jobs=load_full_jobs
         self.load_all_new_pages=load_all_new_pages
 
@@ -41,8 +41,7 @@ class Scraper(abc.ABC, scrapy.Spider):
         Template method for all scrapers.  
         Return a generator iterable for parsed jobs (Job objects).  
         This method is called automatically by scrapy buring the scrape process.  
-
-        #TODO: User global log handler instead of print, find the issue why log isn't working 
+        TODO: User global log handler instead of print, find the issue why log isn't working 
         """
         page_jobs=[]
         jobs_div_list=self.get_jobs_list(response)

@@ -6,17 +6,6 @@ class Scraper_arrondissement_com(Scraper):
     name = "arrondissement.com"
     allowed_domains = ["webcache.googleusercontent.com", name]
     start_urls = ['https://www.arrondissement.com/tout-list-emplois/']
-    
-    def parse(self, *args, **kwargs):
-        """
-        Scrapy Contract for arrondissement.com spider
-        @url https://www.arrondissement.com/tout-list-emplois/
-        @cb_kwargs {"load_full_jobs":false, "load_all_new_pages":false}
-        @returns items 15 15
-        @cb_kwargs {"load_full_jobs":false, "load_all_new_pages":false}
-        @scrape_not_none url title date_posted organisation description
-        """
-        return super().parse(*args, **kwargs)
 
     def get_jobs_list(self, response):
         return response.xpath('//div[contains(@class,"listing")]/div')
@@ -39,3 +28,13 @@ class Scraper_arrondissement_com(Scraper):
 
     def get_next_page_url(self, response):
         return response.xpath('//table[contains(@class,"pager-nav")]//tr/td[last()]/a/@href').get()
+
+    def parse(self, response, *args, **kwargs):
+        """
+        Scrapy Contract for arrondissement.com spider
+        @url https://www.arrondissement.com/tout-list-emplois/
+        @cb_kwargs {"load_full_jobs":false, "load_all_new_pages":false}
+        @returns items 15 15
+        @scrape_not_none url title date_posted organisation description
+        """
+        return super().parse(response, *args, **kwargs)
