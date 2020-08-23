@@ -4,7 +4,7 @@ import requests
 import pdfplumber
 import tempfile
 from .base import Scraper
-from ..jobs import Job
+from ..items import Job
 
 class Scraper_cdeacf_ca(Scraper):
     name = "cdeacf.ca"

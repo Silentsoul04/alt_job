@@ -15,7 +15,7 @@ import datetime
 from string import Template
 from .utils import get_valid_filename, log
 from .utils import get_xlsx_file_bytes
-from .jobs import Job
+from .items import Job
 from .__version__ import __version__
 
 # Date format used everywhere

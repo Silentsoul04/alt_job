@@ -1,4 +1,13 @@
+# Define here the models for your spider middleware
+#
+# See documentation in:
+# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+
 from scrapy import signals
+
+# useful for handling different item types with a single interface
+from itemadapter import is_item, ItemAdapter
+
 import os
 import stem
 import stem.control
@@ -20,25 +29,6 @@ class TorMiddleware(object):
 
 #   TODO: ENABLE MIDDLEWARE ONLY IF CONFIG FILE OPTION IS ON AND SITE 
 #   IS NOT PROTECTED BY CLOUDFLARE (=> MAKE A CONSTANT OF CLOUD FLARE PROTECTED SITES)
-
-# class GoogleCacheMiddleware(object):
-#     def process_request(self, request, spider):
-#         if spider.use_google_cache == True and 'googleusercontent' not in request.url:
-#             new_url = 'https://webcache.googleusercontent.com/search?q=cache:' + request.url
-#             request = request.replace(url=new_url)
-#             return request
-
-# Could also use https://github.com/clemfromspace/scrapy-selenium
-
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
-from scrapy import signals
-
-# useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
 
 
 class AltJobSpiderMiddleware:

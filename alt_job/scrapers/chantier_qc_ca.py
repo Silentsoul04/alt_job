@@ -1,7 +1,7 @@
 import scrapy
 from bs4 import BeautifulSoup
 from .base import Scraper
-from ..jobs import Job
+from ..items import Job
 
 class Scraper_chantier_qc_ca(Scraper):
     name = "chantier.qc.ca"

@@ -2,7 +2,7 @@ import scrapy
 import urllib
 from bs4 import BeautifulSoup
 from .base import Scraper
-from ..jobs import Job
+from ..items import Job
 
 class Scraper_goodwork_ca(Scraper):
     name = "goodwork.ca"

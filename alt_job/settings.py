@@ -1,4 +1,4 @@
-# Scrapy settings for alt_job_project project
+# Scrapy settings for alt_job project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -14,7 +14,7 @@ NEWSPIDER_MODULE = 'alt_job.scrapers'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'alt_job_project (+http://www.yourdomain.com)'
+#USER_AGENT = 'alt_job (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 # ROBOTSTXT_OBEY = True
@@ -45,13 +45,13 @@ NEWSPIDER_MODULE = 'alt_job.scrapers'
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'alt_job_project.middlewares.AltJobProjectSpiderMiddleware': 543,
+#    'alt_job.middlewares.AltJobSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'alt_job_project.middlewares.AltJobProjectDownloaderMiddleware': 543,
+#    'alt_job.middlewares.AltJobDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -63,7 +63,7 @@ NEWSPIDER_MODULE = 'alt_job.scrapers'
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'alt_job_project.pipelines.AltJobProjectPipeline': 300,
+#    'alt_job.pipelines.AltJobPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

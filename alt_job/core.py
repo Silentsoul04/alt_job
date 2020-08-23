@@ -7,7 +7,7 @@ from .scrape import scrape, get_all_scrapers
 from .config import AltJobOptions, TEMPLATE_FILE
 from .db import  JsonDataBase
 from .mail import MailSender
-from .jobs import Job
+from .items import Job
 from .utils import log, init_log, perform, get_xlsx_file
 
 class AltJob(object):

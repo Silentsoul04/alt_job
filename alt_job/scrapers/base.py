@@ -1,7 +1,7 @@
 import abc
 import re
 import scrapy
-from ..jobs import Job
+from ..items import Job
 from ..utils import log
 
 class Scraper(abc.ABC, scrapy.Spider):

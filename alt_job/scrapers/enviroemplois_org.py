@@ -1,7 +1,7 @@
 import urllib
 from bs4 import BeautifulSoup
 from .base import Scraper
-from ..jobs import Job
+from ..items import Job
 
 # This site seems
 

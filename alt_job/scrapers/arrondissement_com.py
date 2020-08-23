@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from .base import Scraper
-from ..jobs import Job
+from ..items import Job
 
 class Scraper_arrondissement_com(Scraper):
     name = "arrondissement.com"
