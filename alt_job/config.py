@@ -41,7 +41,7 @@ class AltJobOptions(collections.UserDict):
         parser2 = argparse.ArgumentParser(
             # Inherit options from config_parser
             parents=[parser1],
-            description="""Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email.""",
+            description="""Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job postings by email. Also generates an Excel file with job postings informations.""",
             prog='python3 -m alt_job', formatter_class=argparse.ArgumentDefaultsHelpFormatter,
             )
 

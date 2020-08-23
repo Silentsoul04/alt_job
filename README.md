@@ -1,13 +1,11 @@
 # Alt Job
   
-Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email.  
+Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job postings by email. Also generates an Excel file with job postings informations.   
 
-The digest include a Excel file all job postings data.   
-The scraped data include: job title, type, salary, week_hours, date posted, apply before date and full description.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens)) 
-
+The scraped data include: **job title, type, salary, week_hours, date posted, apply before date and full description**.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens)) 
 This project is still under construction! 🚧
 
-### Mailling lists 🔥✉️
+### Mailling lists 🔥
 
 Implementation of this software
 
@@ -16,8 +14,7 @@ Implementation of this software
 
 ### Supported websites
 
-Alt Job is wrote in an extensible way, only 30 lines of code are required to write a new job posting site scraper!  
-Focused on Canada/Québec for now, please [contribute](https://github.com/tristanlatr/alt_job/blob/master/CONTRIBUTE.md) to expand the scope 🙂
+Alt Job is wrote in an extensible way, only 30 lines of code are required to write a new job posting site scraper! Focused on Canada/Québec for now, please [contribute](https://github.com/tristanlatr/alt_job/blob/master/CONTRIBUTE.md) to improve the software or expand the scope 🙂
 
 Supports the following websites: 
 - [arrondissement.com](https://www.arrondissement.com/montreal-list-emplois/t1/pc1/): Québec (full parsing) 
@@ -107,20 +104,10 @@ load_all_new_pages=False
 python3 -m alt_job -c /home/user/Jobs/alt_job.conf
 ```
 
-### Help
-```bash
-% python3 -m alt_job -h
-usage: python3 -m alt_job [-h] [-c <File path> [<File path> ...]] [-t] [-V]
-                          [-x <File path>] [-s <Website> [<Website> ...]]
-                          [--jobs_datafile <File path>] [--workers <Number>]
-                          [--quick] [--first_page_only]
-                          [--mailto <Email> [<Email> ...]]
-                          [--log_level <String>] [--scrapy_log_level <String>]
+### Arguments
+Some of the config options can be overwritten with CLI arguments.
 
-Atl Job scrapes a bunch of green/social/alternative websites to send digest of
-new job posting by email.
-
-optional arguments:
+```
   -h, --help            show this help message and exit
   -c <File path> [<File path> ...], --config_file <File path> [<File path> ...]
                         configuration file(s). Default locations will be
