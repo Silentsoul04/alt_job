@@ -1,6 +1,7 @@
 import json
 import tempfile
 from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
 from scrapy import spiderloader
 import scrapy.settings
 
@@ -14,28 +15,19 @@ def scrape(website, scraper_config, log_level, scraped_data_result=None, db=None
     scrapy_process_json_data=None
 
     with tempfile.NamedTemporaryFile() as scrapy_process_temp_file:
-        # Scrapy configuration, launched aith tempm file
-        process = CrawlerProcess(settings={
-            "FEEDS": {
+        
+        settings=get_project_settings()
+        
+        settings.set("FEEDS", {
                 '{}'.format(scrapy_process_temp_file.name): {
                     'format': 'json',
                     'encoding': 'utf8',
-                    'indent': 4,
-                },
-            },
-            "LOG_LEVEL":log_level,
-            "DOWNLOAD_DELAY":3,
-            "COOKIES_ENABLED":False,
-            "SPIDER_MODULES":"alt_job.scrapers",
-            "ITEM_PIPELINES": {
-                'alt_job.pipelines.AddKeywordMatchesPipeline': 100
-            },
-            'DOWNLOADER_MIDDLEWARES': {
-            'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-            'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 400,
-            },
-            'FAKEUSERAGENT_FALLBACK':'Mozilla'
-        })
+                    'indent': 4
+                }})
+        settings.set("LOG_LEVEL", log_level)
+        
+        # Scrapy configuration, launched with temp file
+        process = CrawlerProcess(settings=settings)
 
         process.crawl(website, **scraper_config, db=db)
         process.start()

@@ -13,27 +13,32 @@ class Scraper(abc.ABC, scrapy.Spider):
             - get_jobs_list(response)
             - get_job_dict(selector)
     """
-    # Sub classes must overwrite the 'name' and 'allowed_domains' constant
+    # Sub classes must overwrite the 'name' and 'allowed_domains', 'start_urls' constants
     # All supported domains
     allowed_domains = ["webcache.googleusercontent.com"]
-
     # TODO use google cache by default and retry request with real site if website snapshot is older than X hours
     def start_requests(self):
-        url=self.url
+        url=self.start_urls[0]
         if self.use_google_cache:
-            url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(self.url)
-        yield scrapy.Request(url, callback=self.parse )
+            url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(url)
+        # Allow loading options to be set by cb_kwargs too fo better testing with scrapy contrats
+        yield scrapy.Request(url, callback=self.parse, 
+            cb_kwargs=dict(
+                load_full_jobs=self.load_full_jobs, 
+                load_all_new_pages=self.load_all_new_pages) 
+            )
 
-    def __init__(self, url, use_google_cache=False, db=None, load_full_jobs=True, load_all_new_pages=True):
-        self.url=url
-        self.load_full_jobs=load_full_jobs
-        self.use_google_cache=use_google_cache
+    def __init__(self, url=None, use_google_cache=False, db=None, load_full_jobs=True, load_all_new_pages=True):
+        self.start_urls=[url] if url else type(self).start_urls
         self.db=db
+        self.use_google_cache=use_google_cache
+
+        self.load_full_jobs=load_full_jobs
         self.load_all_new_pages=load_all_new_pages
 
-    def parse(self, response):
+    def parse(self, response, load_full_jobs=True, load_all_new_pages=True):
         """
-        Template method for all scrapers. Do NOT re write this method.  
+        Template method for all scrapers.  
         Return a generator iterable for parsed jobs (Job objects).  
         This method is called automatically by scrapy buring the scrape process.  
 
@@ -72,7 +77,7 @@ class Scraper(abc.ABC, scrapy.Spider):
 
         
 
-        if self.load_full_jobs:
+        if load_full_jobs:
             if type(self).parse_full_job_page == Scraper.parse_full_job_page:
                 print("Scraper {} does not support load_full_jobs=True, some informations might be missing".format(self.name))
             else:
@@ -85,7 +90,7 @@ class Scraper(abc.ABC, scrapy.Spider):
         The method get_next_page_url() has been re-wrote by the Scraper subclass
         Scrape next page
         """
-        if self.load_all_new_pages==True:
+        if load_all_new_pages==True:
             if self.db and any( [self.db.find_job(job_dict)!=None for job_dict in page_jobs] ):
                 # All new job postings loaded
                 pass

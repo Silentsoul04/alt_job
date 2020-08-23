@@ -12,6 +12,27 @@ BOT_NAME = 'alt_job'
 SPIDER_MODULES = ['alt_job.scrapers']
 NEWSPIDER_MODULE = 'alt_job.scrapers'
 
+DOWNLOAD_DELAY=3
+COOKIES_ENABLED=False
+ITEM_PIPELINES={
+    'alt_job.pipelines.AddKeywordMatchesPipeline': 100
+}
+DOWNLOADER_MIDDLEWARES={
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 400,
+}
+FAKEUSERAGENT_FALLBACK='Mozilla'
+
+SPIDER_CONTRACTS = {
+    'alt_job.scrapers.ScrapeNotNone': 10,
+}
+
+FEEDS = {
+    'alt_jobs_feed.csv': {
+        'format': 'csv',
+        'encoding': 'utf8'
+    }
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'alt_job (+http://www.yourdomain.com)'
