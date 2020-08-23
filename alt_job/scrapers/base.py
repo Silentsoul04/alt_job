@@ -4,12 +4,6 @@ import scrapy
 from ..jobs import Job
 from ..utils import log
 
-"""
-Other scrapers TODO:
-"undpjobs.net": https://undpjobs.net/country/Canada
-
-"""
-
 class Scraper(abc.ABC, scrapy.Spider):
     """
     Base class for all scrapers.  

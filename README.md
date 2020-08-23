@@ -27,6 +27,7 @@ Supports the following websites:
 
 The support of the following websites is on the TODO: 
 - [charityvillage.com](https://charityvillage.com): Québec and Canada    
+- [undpjobs.net](https://undpjobs.net/country/Canada): World Wide
 
 ### Install
 

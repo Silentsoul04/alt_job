@@ -84,7 +84,7 @@ class AltJob(object):
                 mail=MailSender(**self.config['alt_job'])
                 mail.send_mail_alert(new_jobs)
             else:
-                log.info("'smtphost' not configured, not sending email")
+                log.info("Configuration 'smtphost' not configured, not sending email")
         else:
             log.info("No new jobs, not sending email")
 

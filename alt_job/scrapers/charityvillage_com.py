@@ -2,13 +2,17 @@ from bs4 import BeautifulSoup
 from .base import Scraper
 from ..jobs import Job
 
+#TODO FIX
+
 # class Scraper_charityvillage_com(Scraper):
 #     name = "charityvillage.com"
 #     allowed_domains = ["webcache.googleusercontent.com", name]
     
-#     #TODO Fix, might need to use Selenium driver to run javascript code
+#     
 #     def get_jobs_list(self, response):
 #         return response.xpath('//ul[contains(@class,"job-search-results")]/li')
+#      Return no element :/ But Xpath matches the list when checking in browser
+#      might need to use Selenium driver to run javascript code
 
 #     def get_job_dict(self, selector):
 #         return {
@@ -24,4 +28,4 @@ from ..jobs import Job
     #     return Job(job_dict)
 
     # def get_next_page_url(self, response):
-        # return response.xpath('//table[contains(@class,"pager-nav")]//tr/td[last()]/a/@href').get()
+        # return response.xpath('').get()
