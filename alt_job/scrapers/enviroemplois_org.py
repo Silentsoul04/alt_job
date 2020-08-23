@@ -10,8 +10,7 @@ class Scraper_enviroemplois_org(Scraper):
     allowed_domains = ["webcache.googleusercontent.com", name]
     
     def get_jobs_list(self, response):
-
-        return response.xpath('/html/body/main/div[2]/div[2]/div') # div/div[contains(@class,"job-offer-card__header")]/div[contains(@class,"job-offer-job-offer-card__filters")]/
+        return response.xpath('/html/body/main/div[2]/div[2]/div')
 
     def get_job_dict(self, selector):
         
