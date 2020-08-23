@@ -20,6 +20,7 @@ The only thing you have to do to support a new website is to drop the the new sc
 The new Scraper must extend `alt_job.scrapers.base.Scraper` which extends `scrapy.Spider`.  
 Read carefully the [base Scraper class](https://github.com/tristanlatr/alt_job/blob/master/alt_job/scrapers/base.py).  
 Fork the repo, hack hack hack and pull request.  
+I recommend [xpath-helper](https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl?hl=en) to check the validity of your xpaths.  
 
 Easy !
 
