@@ -49,7 +49,7 @@ class AltJobOptions(collections.UserDict):
 
         # Arguments that overwrites [alt_job] config values
         parser2.add_argument("-x", "--xlsx_output", metavar='<File path>', help='Write all NEW jobs to Excel file')
-        parser2.add_argument("--enabled_scrapers", metavar='<Website>', help="List of enabled scrapers. By default it's all scrapers configured in config file(s)", nargs='+')
+        parser2.add_argument("-s","--enabled_scrapers", metavar='<Website>', help="List of enabled scrapers. By default it's all scrapers configured in config file(s)", nargs='+')
         parser2.add_argument("--jobs_datafile", metavar='<File path>', 
             help="""JSON file to store ALL jobs data. Default is '~/jobs.json'. 
             Use 'null' keyword to disable the storage of the datafile, all jobs will be considered as new and will be loaded""")
