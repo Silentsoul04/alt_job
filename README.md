@@ -94,11 +94,11 @@ url=https://www.goodwork.ca/jobs.php?prov=QC
 [cdeacf.ca]
 url=http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi
 
-# Load all jobs: If supported by the scraper,
+# Load full jobs details: If supported by the scraper,
 #   this will follow each job posting link in listing and parse full job description.
 #   turn on to parse all job informations
 # Default to False!
-load_all_jobs=True
+load_full_jobs=True
 
 [arrondissement.com]
 url=https://www.arrondissement.com/tout-list-emplois/
@@ -121,6 +121,7 @@ load_full_jobs=Yes
 # Multiple start URLs crawl
 start_urls=["https://www.enviroemplois.org/offres-d-emploi?sector=&region=6&job_kind=&employer=",
     "https://www.enviroemplois.org/offres-d-emploi?sector=&region=3&job_kind=&employer="]
+
 ```
 
 ### Run it
