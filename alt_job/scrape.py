@@ -1,5 +1,6 @@
 import json
 import tempfile
+import os
 import multiprocessing
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
@@ -32,7 +33,10 @@ def _scrape(website, scraper_config, log_level, scraped_data_result=None, db=Non
     scrapy_process_json_data=None
 
     with tempfile.NamedTemporaryFile() as scrapy_process_temp_file:
-        
+
+        settings_file_path = 'alt_job.settings'
+        os.environ.setdefault('SCRAPY_SETTINGS_MODULE', settings_file_path)
+
         settings=get_project_settings()
         
         settings.set("FEEDS", {
