@@ -25,36 +25,67 @@ I recommend [xpath-helper](https://chrome.google.com/webstore/detail/xpath-helpe
 Easy !
 
 **A scraper looks like this:**
+This includes automatic docstrings testing. Please test with `scrapy check`.  
 
 ```python
+import scrapy
+import urllib
 from bs4 import BeautifulSoup
-from . import Scraper
-from ..jobs import Job
+from .base import Scraper
+from ..items import Job
 
-class Scraper_arrondissement_com(Scraper):
-    name = "arrondissement.com"
+class Scraper_goodwork_ca(Scraper):
+    name = "goodwork.ca"
     allowed_domains = ["webcache.googleusercontent.com", name]
-    
+    start_urls = ["https://www.goodwork.ca/jobs"]
+
+    def parse(self, response):
+        """
+        @auto_url goodwork.ca
+        @returns items 50 50
+        @scrape_not_none url title
+        """
+        return super().parse(response)
+
     def get_jobs_list(self, response):
-        # HTML <div class="listing"> contains all dic of postings
-        return response.xpath('//div[contains(@class,"listing")]/div')
+        """
+        @auto_url goodwork.ca
+        @returns_valid_selectorlist
+        """
+        # HTML <ul> contains all li of postings
+        return response.xpath('//*[@id="page"]/div[contains(@class,"listingthumb row")]')
 
     def get_job_dict(self, selector):
         return {
-            'url':selector.xpath('a/@href').get(),
-            'date_posted':selector.xpath('text()').get(),
-            'organisation':selector.xpath('a[@class="fromDirLink"]/text()').get(),
-            'title':selector.xpath('a[@class="title"]/text()').get()
+            'url':urllib.parse.urljoin('http://goodwork.ca/', selector.xpath('div[1]/span/a/@href').get()),
+            'title':selector.xpath('div[1]/span/a').css('::text').get()
         }
 
     def parse_full_job_page(self, response, job_dict):
-        job_dict['description']=BeautifulSoup(response.xpath('//div[@id="fiche"]/div[contains(@class,"publication")]').get()).get_text()
-        job_dict['apply_before']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[6]/text()').get()
-        job_dict['job_type']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[4]/text()').get()
-        job_dict['week_hours']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[2]/text()').get()
-        job_dict['salary']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[3]/text()').get()
+        """
+        @auto_job_url goodwork.ca
+        @cb_kwargs {"job_dict":{"url":"https://...", "title":"Job title"}}
+        @scrape_not_none url title description organisation location
+        @returns items 1 1  
+        """
+        job_dict['description']=BeautifulSoup(response.xpath('//*[@id="page"]/div[1]').get()).get_text()
+        job_dict['organisation']=response.xpath('//*[@id="page"]/div[1]/div[1]/p[1]/a/text()').get()
+        job_dict['location']=response.xpath('//*[@id="page"]/div[1]/div[1]/p[1]/text()[3]').get()
+        date=response.xpath('//*[@id="page"]/div[2]/p[2]/small/text()[1]').get()
+        if date:
+            d_splited = date.split('Date posted:', 1)
+            if len(d_splited)>0:
+                job_dict['date_posted']=d_splited[1]
         return Job(job_dict)
 
     def get_next_page_url(self, response):
-        return response.xpath('//table[contains(@class,"pager-nav")]//tr/td[last()]/a/@href').get()
+        """
+        @auto_url goodwork.ca
+        @returns_valid_link
+        """
+        next_link=[a.xpath('@href').get() for a in response.xpath('//*[@id="page"]/p/a') if 'Next' in a.css('::text').get() ]
+        if len(next_link)==1:
+            return urllib.parse.urljoin('http://goodwork.ca/', next_link[0])
+        else:
+            return None
 ```

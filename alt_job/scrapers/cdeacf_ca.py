@@ -9,17 +9,21 @@ from ..items import Job
 class Scraper_cdeacf_ca(Scraper):
     name = "cdeacf.ca"
     allowed_domains = ["webcache.googleusercontent.com", name]
-    # start_urls = ["http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi"]
+    start_urls = ["http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi"]
 
     def parse(self, response):
-        """ Contract:  
-
-        @url http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi
-        @returns items 1
+        """
+        @auto_url cdeacf.ca
+        @returns items 20 20
+        @scrape_not_none url date_posted organisation title apply_before location
         """
         return super().parse(response)
 
     def get_jobs_list(self, response):
+        """
+        @auto_url cdeacf.ca
+        @returns_valid_selectorlist
+        """
         # HTML <ul> contains all li of postings
         return response.xpath('//div[@id="main-content"]//div[@class="view-content"]/div/ul/li')
 
@@ -34,9 +38,19 @@ class Scraper_cdeacf_ca(Scraper):
         }
     
     def get_next_page_url(self, response):
-        return response.xpath('//*[@id="block-system-main"]/div/div[2]/ul/li[contains(@class,"pager-next")]/a/@href').get()
+        """
+        @auto_url cdeacf.ca
+        @returns_valid_link
+        """
+        return urllib.parse.urljoin('http://cdeacf.ca/', response.xpath('//*[@id="block-system-main"]/div/div[2]/ul/li[contains(@class,"pager-next")]/a/@href').get())
 
     def parse_full_job_page(self, response, job_dict):
+        """
+        @auto_job_url cdeacf.ca
+        @cb_kwargs {"job_dict":{"url":"https://...", "title":"Job title"}}
+        @scrape_not_none url title description
+        @returns items 1 1  
+        """
         main_job_link_url=response.xpath('//article[contains(@class,"node-offre-demploi")]//a/@href').get()
         # PDF detection
         if main_job_link_url.lower().endswith('.pdf'):

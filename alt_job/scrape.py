@@ -1,5 +1,6 @@
 import json
 import tempfile
+import multiprocessing
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from scrapy import spiderloader
@@ -13,7 +14,20 @@ def get_all_scrapers():
     spiders = spider_loader.list()
     return spiders
 
-def scrape(website, scraper_config, log_level, scraped_data_result=None, db=None):
+def scrape(website, scraper_config, log_level='ERROR', db=None):
+    scraped_data_result=multiprocessing.Manager().list()
+    process = multiprocessing.Process(target=_scrape,
+        kwargs=dict(website=website,
+            scraper_config=scraper_config,
+            db=db,
+            log_level=log_level,
+            scraped_data_result=scraped_data_result))
+    process.start()
+    process.join()
+    scraped_data_result=list(scraped_data_result)
+    return scraped_data_result
+
+def _scrape(website, scraper_config, log_level, scraped_data_result=None, db=None):
     scraped_data_result=[] if scraped_data_result==None else scraped_data_result
     scrapy_process_json_data=None
 

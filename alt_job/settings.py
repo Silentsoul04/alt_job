@@ -24,7 +24,11 @@ DOWNLOADER_MIDDLEWARES={
 FAKEUSERAGENT_FALLBACK='Mozilla'
 
 SPIDER_CONTRACTS = {
-    'alt_job.scrapers.ScrapeNotNone': 10,
+    'alt_job.scrapers.contracts.ScrapeNotNone': 10,
+    'alt_job.scrapers.contracts.AutoFillJobUrl': 10,
+    'alt_job.scrapers.contracts.AutoFillUrl': 10,
+    'alt_job.scrapers.contracts.ReturnsValidSelectorList': 10,
+    'alt_job.scrapers.contracts.ReturnsValidLink': 10,
 }
 
 FEEDS = {

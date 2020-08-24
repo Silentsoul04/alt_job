@@ -54,6 +54,7 @@ class AltJobOptions(collections.UserDict):
             help="""JSON file to store ALL jobs data. Default is '~/jobs.json'. 
             Use 'null' keyword to disable the storage of the datafile, all jobs will be considered as new and will be loaded""")
         parser2.add_argument("--workers", metavar='<Number>', help="Number of websites to scrape asynchronously", type=int)
+        parser2.add_argument("--full", action="store_true", help="Enable load_all_jobs and load_all_new_pages on all scrapers.")
         parser2.add_argument("--quick", "--no_load_all_jobs", action='store_true', help='Do not load the full job description page to parse additionnal data (Much more faster). This settings is applied to all scrapers')
         parser2.add_argument("--first_page_only", "--no_load_all_new_pages", action='store_true', help='Do not load new job listing pages until older jobs are found. This settings is applied to all scrapers')
         parser2.add_argument("--mailto", metavar="<Email>", help='Emails to notify of new job postings', nargs='+')
@@ -66,6 +67,9 @@ class AltJobOptions(collections.UserDict):
         config_file['alt_job'].update(vars(args2))
         config_file['alt_job'].update(vars(args1))
 
+        if args2.full and (args2.first_page_only or args2.quick):
+            raise ValueError("Incompatible options: --full is enable with --quick or --first_page_only")
+
         # Overwriting load_all_new_pages and load_full_jobs if passed --first_page_only or --quick
         if args2.first_page_only:
             for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
@@ -73,7 +77,11 @@ class AltJobOptions(collections.UserDict):
         if args2.quick:
             for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
                 config_file[website]['load_full_jobs']=False
-
+        # --full
+        if args2.full:
+            for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
+                config_file[website]['load_full_jobs']=True
+                config_file[website]['load_all_new_pages']=True
         
         self.data=config_file
 

@@ -1,6 +1,5 @@
 import argparse
 import json
-import multiprocessing
 from shutil import copyfile
 from .__version__ import __version__
 from .scrape import scrape, get_all_scrapers
@@ -89,17 +88,10 @@ class AltJob(object):
             log.info("No new jobs, not sending email")
 
     def process_scrape(self, website):
-        scraped_data_result=multiprocessing.Manager().list()
-        process = multiprocessing.Process(target=scrape,
-            kwargs=dict(website=website,
-                scraper_config=self.config[website],
-                db=self.db,
-                log_level=self.config['alt_job']['scrapy_log_level'],
-                scraped_data_result=scraped_data_result))
-        process.start()
-        process.join()
-        scraped_data_result=list(scraped_data_result)
-        return scraped_data_result
+        log_level=self.config['alt_job']['scrapy_log_level']
+        scraper_config=self.config[website]
+        db=self.db
+        return scrape(website, scraper_config, log_level, db)
 
     
     @staticmethod

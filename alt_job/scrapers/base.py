@@ -21,8 +21,8 @@ class Scraper(abc.ABC, scrapy.Spider):
     """
 
     allowed_domains = ["webcache.googleusercontent.com"]
-    start_urls=[]
-    name=None
+    # start_urls=[]
+    # name=None
 
     # TODO use google cache by default and retry request with real site if website snapshot is older than 24 hours
     def start_requests(self):
@@ -49,11 +49,16 @@ class Scraper(abc.ABC, scrapy.Spider):
         TODO: User global log handler instead of print, find the issue why log isn't working 
         """
         page_jobs=[]
+
+        # Calling abstarct method get_jobs_list() and iterating...
         jobs_div_list=self.get_jobs_list(response)
         for div in jobs_div_list:
-            # At least url, title data is loaded from the list of job posting ...
+            
+            # Calling abstarct method get_job_dict()
             job_dict=self.get_job_dict(div)
+
             if not job_dict['url'] or not job_dict['title'] :
+                # At least url, title data is loaded from the list of job posting ...
                 raise ValueError( "Could not find valid job information ('url' and 'title') in data:\n" + 
                         str(div.get()) + "\nScraped infos:\n" + str(job_dict) + "\nReport this issue on github!" )
             
@@ -135,7 +140,7 @@ class Scraper(abc.ABC, scrapy.Spider):
         Scrapers must re write this method.  
 
         Arguments:  
-        - selectorlist: selectorlist object of the job posting in the listing  
+        - selector: selector object of the job posting in the listing  
 
         Must return a dict {'url':'https://job-url' , 'title':'Job title', 'organisation':'My community' [...] }
 
