@@ -36,7 +36,7 @@ class MailSender():
         self.smtptls=smtptls
         self.mailto=mailto
 
-    def send_mail_alert(self, jobs):
+    def send_mail_alert(self, jobs, scraper_configs):
         '''Sending the report'''
         date = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         # Building message
@@ -44,7 +44,7 @@ class MailSender():
         message['Subject'] = 'New job postings - {}'.format(date)
         message['From'] = self.mailfrom
         message['To'] = ','.join(self.mailto)
-        body = self.build_message(jobs)
+        body = self.build_message(jobs, scraper_configs)
         message.attach(MIMEText(body, 'html'))
 
         log.debug('Mail HTML :\n'+body)
@@ -66,7 +66,7 @@ class MailSender():
         server.quit()
 
 
-    def build_message(self, jobs):
+    def build_message(self, jobs, scraper_configs):
         '''Build mail message text base on jobs'''
         message=''
         message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hello,</p>'
@@ -87,7 +87,7 @@ class MailSender():
 
         message+='<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Good luck!</p>'
 
-        message = self.TEMPLATE_EMAIL.substitute(content=message, alt_job_version=__version__)
+        message = self.TEMPLATE_EMAIL.substitute(content=message, alt_job_version=__version__, scraper_configs=scraper_configs)
         return message
 
     TEMPLATE_EMAIL=Template("""
@@ -221,6 +221,11 @@ class MailSender():
             <!-- START FOOTER -->
             <div class="footer" style="clear: both; Margin-top: 10px; text-align: center; width: 100%;">
               <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
+                <tr>
+                  <td class="content-block powered-by" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 10px; color: #999999; text-align: center;">
+                    Configuration: $scraper_configs
+                  </td>
+                </tr>
                 <tr>
                   <td class="content-block powered-by" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 12px; color: #999999; text-align: center;">
                     Powered by open source software, <br /> <a href="https://github.com/tristanlatr/alt_job" style="color: #999999; font-size: 13px; text-align: center; text-decoration: none;">Alt Job version $alt_job_version </a>

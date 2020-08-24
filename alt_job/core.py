@@ -42,6 +42,7 @@ class AltJob(object):
             print("No website to scrape! Please configure at least one scraper in your config file")
             exit(1)
 
+    def run(self):
         # Run all scrapers
         scraped_data=[]
 
@@ -82,11 +83,26 @@ class AltJob(object):
             
             if self.config['alt_job']['smtphost']:
                 mail=MailSender(**self.config['alt_job'])
-                mail.send_mail_alert(new_jobs)
+                mail.send_mail_alert(new_jobs, scraper_configs=self.get_scraper_configs_string(new_jobs))
             else:
                 log.info("Configuration 'smtphost' not configured, not sending email")
         else:
             log.info("No new jobs, not sending email")
+
+    def get_scraper_configs_string(self, new_jobs):
+        string=""
+        for scraper in self.config['alt_job']['enabled_scrapers']:
+            urls = []
+            urls.extend([self.config[scraper]['url']] if 'url' in self.config[scraper] else [])
+            urls.extend(self.config[scraper]['start_urls'] if 'start_urls' in self.config[scraper] else [])
+
+            string+="{name} (Start URLs: {urls}, Load: {load}) | ".format(
+                    name=scraper, 
+                    urls=', '.join('<a href="{url}"> {i} </a>'.format(url=url, i=urls.index(url)+1) for url in urls), 
+                    load='Full' if ('load_full_jobs' in self.config[scraper] and self.config[scraper]['load_full_jobs'] and 
+                        'load_all_new_pages' in self.config[scraper] and self.config[scraper]['load_all_new_pages']) else 'Full, first page only' if (
+                        'load_full_jobs' in self.config[scraper] and self.config[scraper]['load_full_jobs']) else 'Quick')
+        return string
 
     def process_scrape(self, website):
         log_level=self.config['alt_job']['scrapy_log_level']

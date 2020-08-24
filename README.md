@@ -25,7 +25,7 @@ This project is still under construction! 🚧
 Implementation of this software
 
 -  Montréal / Québec:  
-[alt_job_mtl](https://lists.riseup.net/www/arc/alt_job_mtl) mailling list to receive a daily digest of new Montréal and Province of Québec job postings. To subscribe, send an email to alt_job_mtl-subscribe@lists.riseup.net and validate your subscription.  
+[alt_job_mtl](https://groups.google.com/u/1/g/alt_job_mtl) mailling list to receive a daily digest of new Montréal and Province of Québec job postings. To subscribe, send an email to alt_job_mtl+subscribe@googlegroups.com and validate your subscription.  
 
 ### Supported websites
 

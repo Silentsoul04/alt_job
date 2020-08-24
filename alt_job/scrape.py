@@ -33,12 +33,11 @@ def _scrape(website, scraper_config, log_level, scraped_data_result=None, db=Non
     scrapy_process_json_data=None
 
     with tempfile.NamedTemporaryFile() as scrapy_process_temp_file:
-
-        settings_file_path = 'alt_job.settings'
-        os.environ.setdefault('SCRAPY_SETTINGS_MODULE', settings_file_path)
-
-        settings=get_project_settings()
         
+        os.environ.setdefault('SCRAPY_SETTINGS_MODULE', 'alt_job.settings')
+        settings=get_project_settings()
+        os.environ.setdefault('SCRAPY_SETTINGS_MODULE',  None)
+
         settings.set("FEEDS", {
                 '{}'.format(scrapy_process_temp_file.name): {
                     'format': 'json',
@@ -48,7 +47,7 @@ def _scrape(website, scraper_config, log_level, scraped_data_result=None, db=Non
         settings.set("LOG_LEVEL", log_level)
         
         # Scrapy configuration, launched with temp file
-        process = CrawlerProcess(settings=settings)
+        process = CrawlerProcess(settings=dict(settings))
 
         process.crawl(website, **scraper_config, db=db)
         process.start()

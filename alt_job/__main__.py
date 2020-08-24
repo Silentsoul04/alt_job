@@ -7,7 +7,8 @@ if sys.version_info[0] < 3:
 from .core import AltJob
 
 def main():
-    AltJob()
-    
+    aj=AltJob()
+    aj.run()
+
 if __name__ == '__main__':
     main()
