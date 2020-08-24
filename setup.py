@@ -19,7 +19,7 @@ README = (HERE / "README.md").read_text(encoding='utf-8')
 
 setup(
     name='alt_job',
-    description="Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email.",
+    description="Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job posting by email. Also generates an Excel file with job postings informations.",
     url='https://github.com/tristanlatr/alt_job',
     maintainer='tristanlatr',
     version=version['__version__'],

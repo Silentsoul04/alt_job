@@ -232,7 +232,7 @@ url=http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi
 #   this will follow each job posting link in listing and parse full job description.
 #   turn on to parse all job informations
 # Default to False!
-load_all_jobs=False
+load_all_jobs=True
 
 [arrondissement.com]
 url=https://www.arrondissement.com/tout-list-emplois/
@@ -241,12 +241,11 @@ url=https://www.arrondissement.com/tout-list-emplois/
 #   this will follow each "next page" links and parse next listing page
 #   until older (in database) job postings are found.
 # Default to False!
-load_all_new_pages=False
+load_all_new_pages=True
 
 [chantier.qc.ca]
 url=https://chantier.qc.ca/decouvrez-leconomie-sociale/offres-demploi
-# Special case of chantier.qc.ca wich does not have paging
-load_all_new_pages=False
+load_full_jobs=Yes
 
 # Disabled scraper
 # [engages.ca]

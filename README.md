@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/tristanlatr/alt_job/actions" target="_blank"><img src="https://github.com/tristanlatr/alt_job/workflows/test/badge.svg"></a>
-  <a href="https://pypi.org/project/alt_job/" target="_blank"><img src="https://badge.fury.io/py/alt_job.svg"></a>
+  <a href="https://pypi.org/project/alt-job/" target="_blank"><img src="https://badge.fury.io/py/alt-job.svg"></a>
   <!-- <a href="https://codecov.io/gh/tristanlatr/alt_job" target="_blank"><img src="https://codecov.io/gh/tristanlatr/alt_job/branch/master/graph/badge.svg"></a> -->
   <!-- <a href="https://codeclimate.com/github/tristanlatr/alt_job" target="_blank"><img src="https://codeclimate.com/github/tristanlatr/alt_job/badges/gpa.svg"></a> -->
 
@@ -25,7 +25,7 @@ This project is still under construction! 🚧
 Implementation of this software
 
 -  Montréal / Québec:  
-[alt_job_mtl](https://lists.riseup.net/www/arc/alt_job_mtl) mailling list to receive a daily digest of new Montréal and Province of Québec job postings (some postings cannot be filtered). To subscribe, send an email to alt_job_mtl-subscribe@lists.riseup.net and validate your subscription.  
+[alt_job_mtl](https://lists.riseup.net/www/arc/alt_job_mtl) mailling list to receive a daily digest of new Montréal and Province of Québec job postings. To subscribe, send an email to alt_job_mtl-subscribe@lists.riseup.net and validate your subscription.  
 
 ### Supported websites
 
@@ -54,6 +54,8 @@ Require Python >= 3.6
 
 Sample config file
 ```ini
+
+
 [alt_job]
 
 ##### General config #####
@@ -94,8 +96,9 @@ url=http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi
 
 # Load all jobs: If supported by the scraper,
 #   this will follow each job posting link in listing and parse full job description.
-# Default to True!
-load_all_jobs=False
+#   turn on to parse all job informations
+# Default to False!
+load_all_jobs=True
 
 [arrondissement.com]
 url=https://www.arrondissement.com/tout-list-emplois/
@@ -103,13 +106,12 @@ url=https://www.arrondissement.com/tout-list-emplois/
 # Load all new pages: If supported by the scraper,
 #   this will follow each "next page" links and parse next listing page
 #   until older (in database) job postings are found.
-# Default to True!
-load_all_new_pages=False
+# Default to False!
+load_all_new_pages=True
 
 [chantier.qc.ca]
 url=https://chantier.qc.ca/decouvrez-leconomie-sociale/offres-demploi
-# Special case of chantier.qc.ca wich does not have paging
-load_all_new_pages=False
+load_full_jobs=Yes
 
 # Disabled scraper
 # [engages.ca]
@@ -119,7 +121,6 @@ load_all_new_pages=False
 # Multiple start URLs crawl
 start_urls=["https://www.enviroemplois.org/offres-d-emploi?sector=&region=6&job_kind=&employer=",
     "https://www.enviroemplois.org/offres-d-emploi?sector=&region=3&job_kind=&employer="]
-
 ```
 
 ### Run it
@@ -152,10 +153,12 @@ Some of the config options can be overwritten with CLI arguments.
                         as new and will be loaded (default: )
   --workers <Number>    Number of websites to scrape asynchronously (default:
                         5)
+  --full                Enable load_all_jobs and load_all_new_pages on all
+                        scrapers. (default: False)
   --quick, --no_load_all_jobs
-                        Do not load the full job description page and parse
-                        additionnal data. This settings is applied to all
-                        scrapers (default: False)
+                        Do not load the full job description page to parse
+                        additionnal data (Much more faster). This settings is
+                        applied to all scrapers (default: False)
   --first_page_only, --no_load_all_new_pages
                         Do not load new job listing pages until older jobs are
                         found. This settings is applied to all scrapers
@@ -165,4 +168,5 @@ Some of the config options can be overwritten with CLI arguments.
   --log_level <String>  Alt job log level. Exemple: DEBUG (default: INFO)
   --scrapy_log_level <String>
                         Scrapy log level. Exemple: DEBUG (default: ERROR)
+
 ```

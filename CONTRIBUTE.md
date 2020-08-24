@@ -24,8 +24,11 @@ I recommend [xpath-helper](https://chrome.google.com/webstore/detail/xpath-helpe
 
 Easy !
 
-**A scraper looks like this:**
-This includes automatic docstrings testing. Please test with `scrapy check`.  
+**A scraper looks like this:**  
+
+This includes automatic docstrings testing, [Contracts](https://docs.scrapy.org/en/latest/topics/contracts.html).  
+
+Run tests with `scrapy check exemple.coma`
 
 ```python
 import scrapy
