@@ -1,5 +1,19 @@
-# Alt Job
-  
+
+<h1 align="center">Alt Job</h1>
+
+<p align="center">
+  Scraping alternatives websites for jobs.
+  <br>
+</p>
+
+<p align="center">
+  <a href="https://github.com/tristanlatr/alt_job/actions" target="_blank"><img src="https://github.com/tristanlatr/alt_job/workflows/test/badge.svg"></a>
+  <a href="https://pypi.org/project/alt_job/" target="_blank"><img src="https://badge.fury.io/py/alt_job.svg"></a>
+  <!-- <a href="https://codecov.io/gh/tristanlatr/alt_job" target="_blank"><img src="https://codecov.io/gh/tristanlatr/alt_job/branch/master/graph/badge.svg"></a> -->
+  <!-- <a href="https://codeclimate.com/github/tristanlatr/alt_job" target="_blank"><img src="https://codeclimate.com/github/tristanlatr/alt_job/badges/gpa.svg"></a> -->
+
+</p>
+
 Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job postings by email. Also generates an Excel file with job postings informations.   
 
 The scraped data include: **job title, type, salary, week_hours, date posted, apply before date and full description**.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens))  
