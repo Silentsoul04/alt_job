@@ -98,7 +98,7 @@ class AltJob(object):
 
             string+="{name} (Start URLs: {urls}, Load: {load}) | ".format(
                     name=scraper, 
-                    urls=', '.join('<a href="{url}"> {i} </a>'.format(url=url, i=urls.index(url)+1) for url in urls), 
+                    urls=', '.join('<a href="{url}"> {i}</a>'.format(url=url, i=urls.index(url)+1) for url in urls), 
                     load='Full' if ('load_full_jobs' in self.config[scraper] and self.config[scraper]['load_full_jobs'] and 
                         'load_all_new_pages' in self.config[scraper] and self.config[scraper]['load_all_new_pages']) else 'Full, first page only' if (
                         'load_full_jobs' in self.config[scraper] and self.config[scraper]['load_full_jobs']) else 'Quick')
