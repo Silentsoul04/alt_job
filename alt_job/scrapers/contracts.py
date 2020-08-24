@@ -12,7 +12,7 @@ from ..scrape import get_all_scrapers, scrape
 class ScrapeNotNone(Contract):
 
     """ Contract to check presence of fields in scraped items and check if they are None
-        e.g.
+
         @scrape_not_none url title description
     """
 
@@ -24,12 +24,12 @@ class ScrapeNotNone(Contract):
                 missing = [arg for arg in self.args if arg not in ItemAdapter(x) or ItemAdapter(x)[arg]==None]
                 if missing:
                     missing_str = ", ".join(missing)
-                    raise ContractFail("None fields: %s. Item %s" % (missing_str, x))
+                    raise ContractFail("None fields: %s. Item is %s" % (missing_str, x))
 
 class ReturnsValidSelectorList(Contract):
     
     """ Contract to check if the returned output is a Selector list
-        e.g.
+
         @returns_valid_selectorlist
     """
 
@@ -44,8 +44,8 @@ class ReturnsValidSelectorList(Contract):
 
 class ReturnsValidLink(Contract):
     
-    """ Contract to check presence of fields in scraped items and check if they are None
-        e.g.
+    """ Contract to check if the method returns a valid link
+
         @returns_valid_link
     """
 

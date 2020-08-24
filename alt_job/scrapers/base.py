@@ -19,10 +19,7 @@ class Scraper(abc.ABC, scrapy.Spider):
     Sub classes must overwrite the 'name' and 'allowed_domains', 'start_urls' constants
         "webcache.googleusercontent.com" should be included in allowed_domains
     """
-
     allowed_domains = ["webcache.googleusercontent.com"]
-    # start_urls=[]
-    # name=None
 
     # TODO use google cache by default and retry request with real site if website snapshot is older than 24 hours
     def start_requests(self):
@@ -75,9 +72,10 @@ class Scraper(abc.ABC, scrapy.Spider):
             if ( (not self.db or self.db.find_job(job_dict)==None)
                 and self.load_full_jobs ):
                 if type(self).parse_full_job_page != Scraper.parse_full_job_page:
-                    # then load_full_jobs is called with url of the full job post
+                    # load_full_jobs=Yes and it's supported by scraper
+                    # Call parse_full_job_page() with job URL
                     yield response.follow(job_dict['url'], 
-                        callback=self.parse_full_job_page, # Parse all other data (optionnal)
+                        callback=self.parse_full_job_page,
                         cb_kwargs=dict(job_dict=job_dict))
                 else:
                     yield Job(job_dict)
