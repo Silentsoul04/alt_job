@@ -12,31 +12,36 @@ class Scraper(abc.ABC, scrapy.Spider):
     - abstarct methods that must be rewrote by subclasses.  
             - get_jobs_list(response)
             - get_job_dict(selector)
+    - abstarct methods that can be rewrote by subclasses to implement full features
+            - parse_full_job_page()
+            - get_next_page_url()
+
+    Sub classes must overwrite the 'name' and 'allowed_domains', 'start_urls' constants
+        "webcache.googleusercontent.com" should be included in allowed_domains
     """
-    # Sub classes must overwrite the 'name' and 'allowed_domains', 'start_urls' constants
-    # All supported domains
+
     allowed_domains = ["webcache.googleusercontent.com"]
     start_urls=[]
-    # TODO use google cache by default and retry request with real site if website snapshot is older than X hours
-    def start_requests(self):
-        url=self.start_urls[0]
-        if self.use_google_cache:
-            url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(url)
-        # Allow loading options to be set by cb_kwargs too fo better testing with scrapy contrats
-        yield scrapy.Request(url, callback=self.parse, 
-            cb_kwargs=dict(
-                load_full_jobs=self.load_full_jobs, 
-                load_all_new_pages=self.load_all_new_pages) 
-            )
+    name=None
 
-    def __init__(self, url=None, use_google_cache=False, db=None, load_full_jobs=True, load_all_new_pages=True):
-        self.start_urls=[url] if url else type(self).start_urls
+    # TODO use google cache by default and retry request with real site if website snapshot is older than 24 hours
+    def start_requests(self):
+        for url in self.start_urls:
+            if self.use_google_cache:
+                url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(url)
+            # Allow loading options to be set by cb_kwargs too fo better testing with scrapy contrats
+            yield scrapy.Request(url, callback=self.parse )
+
+    def __init__(self, url=None, start_urls=None, 
+        use_google_cache=False, db=None, load_full_jobs=False, load_all_new_pages=False):
+
+        self.start_urls=[url] if url else start_urls if start_urls else type(self).start_urls
         self.db=db
         self.use_google_cache=use_google_cache
         self.load_full_jobs=load_full_jobs
         self.load_all_new_pages=load_all_new_pages
 
-    def parse(self, response, load_full_jobs=True, load_all_new_pages=True):
+    def parse(self, response):
         """
         Template method for all scrapers.  
         Return a generator iterable for parsed jobs (Job objects).  
@@ -74,36 +79,42 @@ class Scraper(abc.ABC, scrapy.Spider):
             else:
                 yield Job(job_dict)
 
-        
-
-        if load_full_jobs:
+        # Just printing
+        if self.load_full_jobs:
             if type(self).parse_full_job_page == Scraper.parse_full_job_page:
-                print("Scraper {} does not support load_full_jobs=True, some informations might be missing".format(self.name))
+                if self.load_all_new_pages==False:
+                    print("Scraped {} jobs from {}. Scraper {} does not support load_full_jobs=True and load_all_new_pages=False, some new job postings and job informations might be missing".format(len(page_jobs), response.url, self.name))
+                else:
+                    print("Scraped {} jobs from {}. Scraper {} does not support load_full_jobs=True, some informations might be missing".format(len(page_jobs), response.url, self.name))
             else:
                 print("Scraping {} jobs from {}...".format(len(page_jobs), response.url))
         else:
-            print("Scraped {} jobs from {}. load_full_jobs=False, some informations might be missing".format(len(page_jobs), response.url))
+            if self.load_all_new_pages==False:
+                print("Scraped {} jobs from {}. load_all_new_pages=False and load_full_jobs=False, some new job postings and job informations might be missing".format(len(page_jobs), response.url))
+            else:
+                print("Scraped {} jobs from {}. load_full_jobs=False, some informations might be missing".format(len(page_jobs), response.url))
        
         """
         If all page jobs are new and 
         The method get_next_page_url() has been re-wrote by the Scraper subclass
         Scrape next page
         """
-        if load_all_new_pages==True:
+        if self.load_all_new_pages==True:
             if self.db and any( [self.db.find_job(job_dict)!=None for job_dict in page_jobs] ):
                 # All new job postings loaded
                 pass
             else:
                 if self.get_next_page_url(response)!=None :
                     # Loading next page...
-                    yield response.follow(self.get_next_page_url(response), callback=self.parse)
+                    yield response.follow(self.get_next_page_url(response),
+                        callback=self.parse)
                 else:
                     if type(self).get_next_page_url != Scraper.get_next_page_url:
                         # Last page loaded
                         pass
                     else:
                         print("Scraper {} does not support load_all_new_pages=True, some new job postings might be missing".format(self.name))
-    
+
     @abc.abstractmethod
     def get_jobs_list(self, response):
         """
@@ -145,7 +156,6 @@ class Scraper(abc.ABC, scrapy.Spider):
 
         This method is called by `Scraper.parse()` method if load_full_jobs==True  
         Must return a Job()  
-
         """
         return Job(job_dict)
 

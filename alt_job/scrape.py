@@ -6,7 +6,10 @@ from scrapy import spiderloader
 import scrapy.settings
 
 def get_all_scrapers():
-    spider_loader = spiderloader.SpiderLoader(settings=scrapy.settings.Settings(values={"SPIDER_MODULES":"alt_job.scrapers"}))
+    spider_loader = spiderloader.SpiderLoader(
+        settings=scrapy.settings.Settings(
+            values={"SPIDER_MODULES":"alt_job.scrapers"}
+    ))
     spiders = spider_loader.list()
     return spiders
 

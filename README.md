@@ -100,6 +100,12 @@ load_all_new_pages=False
 # Disabled scraper
 # [engages.ca]
 # url=https://www.engages.ca/emplois?search%5Bkeyword%5D=&search%5Bjob_sector%5D=&search%5Bjob_city%5D=Montr%C3%A9al
+
+[enviroemplois.org]
+# Multiple start URLs crawl
+start_urls=["https://www.enviroemplois.org/offres-d-emploi?sector=&region=6&job_kind=&employer=",
+    "https://www.enviroemplois.org/offres-d-emploi?sector=&region=3&job_kind=&employer="]
+
 ```
 
 ### Run it

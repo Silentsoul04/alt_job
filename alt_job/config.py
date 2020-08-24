@@ -95,7 +95,7 @@ DEFAULT_CONFIG={
 }
 
 BOOL_VALUES=['use_google_cache', 'smtptls', 'load_full_jobs', 'load_all_new_pages', 'attach_jobs_description']
-JSON_VALUES=['mailto']
+JSON_VALUES=['mailto', 'start_urls']
 INT_VALUES=['smtpport', 'workers']
 
 class ConfigurationFile(collections.UserDict):
@@ -222,7 +222,8 @@ url=http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi
 
 # Load all jobs: If supported by the scraper,
 #   this will follow each job posting link in listing and parse full job description.
-# Default to True!
+#   turn on to parse all job informations
+# Default to False!
 load_all_jobs=False
 
 [arrondissement.com]
@@ -231,7 +232,7 @@ url=https://www.arrondissement.com/tout-list-emplois/
 # Load all new pages: If supported by the scraper,
 #   this will follow each "next page" links and parse next listing page
 #   until older (in database) job postings are found.
-# Default to True!
+# Default to False!
 load_all_new_pages=False
 
 [chantier.qc.ca]
@@ -242,6 +243,11 @@ load_all_new_pages=False
 # Disabled scraper
 # [engages.ca]
 # url=https://www.engages.ca/emplois?search%5Bkeyword%5D=&search%5Bjob_sector%5D=&search%5Bjob_city%5D=Montr%C3%A9al
+
+[enviroemplois.org]
+# Multiple start URLs crawl
+start_urls=["https://www.enviroemplois.org/offres-d-emploi?sector=&region=6&job_kind=&employer=",
+    "https://www.enviroemplois.org/offres-d-emploi?sector=&region=3&job_kind=&employer="]
 
 """
 

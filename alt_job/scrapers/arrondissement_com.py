@@ -5,7 +5,16 @@ from ..items import Job
 class Scraper_arrondissement_com(Scraper):
     name = "arrondissement.com"
     allowed_domains = ["webcache.googleusercontent.com", name]
-    start_urls = ['https://www.arrondissement.com/tout-list-emplois/']
+    # start_urls = ['https://www.arrondissement.com/tout-list-emplois/']
+
+    def parse(self, response):
+        """ Contract:  
+
+        @url https://www.arrondissement.com/tout-list-emplois/
+        @returns items 15 15
+        @parses url title
+        """
+        return super().parse(response)
 
     def get_jobs_list(self, response):
         return response.xpath('//div[contains(@class,"listing")]/div')
@@ -19,6 +28,11 @@ class Scraper_arrondissement_com(Scraper):
         }
 
     def parse_full_job_page(self, response, job_dict):
+        """ This parses the full job page
+
+        @url https://web.archive.org/web/20200824020247/https://www.arrondissement.com/tout-get-emplois/t1/u75815-direction-generale-adjointe-organisme-lucratif
+        @returns items 1 1  
+        """
         job_dict['description']=BeautifulSoup(response.xpath('//div[@id="fiche"]/div[contains(@class,"publication")]').get()).get_text()
         job_dict['apply_before']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[6]/text()').get()
         job_dict['job_type']=response.xpath('//*[@id="fiche"]/div[2]/div[2]/div[4]/text()').get()
@@ -28,13 +42,3 @@ class Scraper_arrondissement_com(Scraper):
 
     def get_next_page_url(self, response):
         return response.xpath('//table[contains(@class,"pager-nav")]//tr/td[last()]/a/@href').get()
-
-    def parse(self, response, *args, **kwargs):
-        """
-        Scrapy Contract for arrondissement.com spider
-        @url https://www.arrondissement.com/tout-list-emplois/
-        @cb_kwargs {"load_full_jobs":false, "load_all_new_pages":false}
-        @returns items 15 15
-        @scrape_not_none url title date_posted organisation description
-        """
-        return super().parse(response, *args, **kwargs)

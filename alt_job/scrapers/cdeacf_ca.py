@@ -9,6 +9,16 @@ from ..items import Job
 class Scraper_cdeacf_ca(Scraper):
     name = "cdeacf.ca"
     allowed_domains = ["webcache.googleusercontent.com", name]
+    # start_urls = ["http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi"]
+
+    def parse(self, response):
+        """ Contract:  
+
+        @url http://cdeacf.ca/recherches?f%5B0%5D=type%3Aoffre_demploi
+        @returns items 1
+        """
+        return super().parse(response)
+
     def get_jobs_list(self, response):
         # HTML <ul> contains all li of postings
         return response.xpath('//div[@id="main-content"]//div[@class="view-content"]/div/ul/li')
