@@ -1,6 +1,7 @@
 import argparse
 import json
 from shutil import copyfile
+import os
 from .__version__ import __version__
 from .scrape import scrape, get_all_scrapers
 from .config import AltJobOptions, TEMPLATE_FILE
@@ -12,6 +13,9 @@ from .utils import log, init_log, perform, get_xlsx_file
 class AltJob(object):
 
     def __init__(self):
+
+        settings_file_path = 'alt_job.settings'
+        os.environ.setdefault('SCRAPY_SETTINGS_MODULE', settings_file_path)
 
         self.config=AltJobOptions()
 
