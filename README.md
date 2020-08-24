@@ -2,7 +2,7 @@
 <h1 align="center">Alt Job</h1>
 
 <p align="center">
-  Scraping alternatives websites for jobs.
+  Scraping alternative websites for jobs.
   <br>
 </p>
 
