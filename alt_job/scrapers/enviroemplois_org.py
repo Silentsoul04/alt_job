@@ -37,13 +37,12 @@ class Scraper_enviroemplois_org(Scraper):
     def parse_full_job_page(self, response, job_dict):
         """
         @auto_job_url enviroemplois.org
-        @cb_kwargs {"job_dict":{"url":"https://...", "title":"Job title"}}
-        @scrape_not_none url title description week_hours salary
+        @scrape_not_none url title description
         @returns items 1 1  
         """
         job_dict['description']=BeautifulSoup(response.xpath('/html/body/main/div[4]/div/div/div[1]').get()).get_text()
-        job_dict['week_hours']=response.xpath('/html/body/main/div[4]/div/div/div[1]/div/div[3]/div/span/text()').get()
-        job_dict['salary']=response.xpath('/html/body/main/div[4]/div/div/div[1]/div/div[2]/div/span/text()').get()
+        job_dict['week_hours']=response.xpath('/html/body/main/div[4]/div/div/div[1]/div/div[3]/div/span/text()').get() # None sometimes
+        job_dict['salary']=response.xpath('/html/body/main/div[4]/div/div/div[1]/div/div[2]/div/span/text()').get() # None sometimes
         return Job(job_dict)
 
     def get_next_page_url(self, response):

@@ -34,7 +34,6 @@ class Scraper_goodwork_ca(Scraper):
     def parse_full_job_page(self, response, job_dict):
         """
         @auto_job_url goodwork.ca
-        @cb_kwargs {"job_dict":{"url":"https://...", "title":"Job title"}}
         @scrape_not_none url title description organisation location
         @returns items 1 1  
         """

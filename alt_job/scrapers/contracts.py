@@ -77,7 +77,8 @@ class AutoFillUrl(Contract):
 
 class AutoFillJobUrl(Contract):
     """ Contract to set the url of the request automatically 
-        to the first JOB. Loaded the listing and returns the first URL.
+        to the first JOB. Loaded the listing and returns the first URL.  
+        Also sets job_dict with url and title in cb_kwargs
 
         @auto_job_url arrondissement.com
     """
@@ -88,6 +89,7 @@ class AutoFillJobUrl(Contract):
         website=self.args[0]
         jobs = scrape(website, dict(load_full_jobs=False, load_all_new_pages=False))
         args['url'] = jobs[0]['url']
+        args['cb_kwargs']=dict(job_dict={'url':jobs[0]['url'], 'title':jobs[0]['title']})
         print("First {} job posting test URL is: {}".format(website, args['url']))
         return args
                 

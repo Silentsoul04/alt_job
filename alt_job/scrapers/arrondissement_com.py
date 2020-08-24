@@ -34,7 +34,6 @@ class Scraper_arrondissement_com(Scraper):
     def parse_full_job_page(self, response, job_dict):
         """
         @auto_job_url arrondissement.com
-        @cb_kwargs {"job_dict":{"url":"https://...", "title":"Job title"}}
         @scrape_not_none url title description apply_before job_type week_hours
         @returns items 1 1  
         """

@@ -37,7 +37,6 @@ class Scraper_engages_ca(Scraper):
     def parse_full_job_page(self, response, job_dict):
         """
         @auto_job_url engages.ca
-        @cb_kwargs {"job_dict":{"url":"https://...", "title":"Job title"}}
         @scrape_not_none url title description date_posted
         @returns items 1 1  
         """

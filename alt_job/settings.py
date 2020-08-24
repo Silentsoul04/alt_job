@@ -10,9 +10,8 @@
 BOT_NAME = 'alt_job'
 
 SPIDER_MODULES = ['alt_job.scrapers']
-NEWSPIDER_MODULE = 'alt_job.scrapers'
 
-DOWNLOAD_DELAY=3
+DOWNLOAD_DELAY=6
 COOKIES_ENABLED=False
 ITEM_PIPELINES={
     'alt_job.pipelines.AddKeywordMatchesPipeline': 100
@@ -32,7 +31,7 @@ SPIDER_CONTRACTS = {
 }
 
 FEEDS = {
-    'alt_job_feed.json': {
+    'alt_job_default_feed.json': {
         'format': 'json',
         'encoding': 'utf8'
     }

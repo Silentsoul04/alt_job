@@ -47,7 +47,6 @@ class Scraper_cdeacf_ca(Scraper):
     def parse_full_job_page(self, response, job_dict):
         """
         @auto_job_url cdeacf.ca
-        @cb_kwargs {"job_dict":{"url":"https://...", "title":"Job title"}}
         @scrape_not_none url title description
         @returns items 1 1  
         """

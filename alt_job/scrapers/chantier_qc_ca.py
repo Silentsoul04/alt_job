@@ -33,7 +33,6 @@ class Scraper_chantier_qc_ca(Scraper):
     def parse_full_job_page(self, response, job_dict):
         """
         @auto_job_url chantier.qc.ca
-        @cb_kwargs {"job_dict":{"url":"https://...", "title":"Job title"}}
         @scrape_not_none url title description organisation date_posted apply_before location
         @returns items 1 1  
         """
