@@ -30,13 +30,6 @@ SPIDER_CONTRACTS = {
     'alt_job.scrapers.contracts.ReturnsValidLink': 10,
 }
 
-FEEDS = {
-    'alt_job_default_feed.json': {
-        'format': 'json',
-        'encoding': 'utf8'
-    }
-}
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'alt_job (+http://www.yourdomain.com)'
 
