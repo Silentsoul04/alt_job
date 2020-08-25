@@ -46,11 +46,6 @@ class AltJob(object):
         # Run all scrapers
         scraped_data=[]
 
-        # Old synchronous iteration
-        # for scraper in enabled_scrapers:
-        #     scraped_jobs=self.process_scrape(scraper)
-        #     scraped_data.extend(scraped_jobs)
-
         returned_data=perform(self.process_scrape, self.config['alt_job']['enabled_scrapers'], 
             asynch=self.config['alt_job']['workers']>1,
             workers=self.config['alt_job']['workers'],

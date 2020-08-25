@@ -187,6 +187,44 @@ def getint(conf, section, key):
     except ValueError as err:
         raise ValueError("Could not read int value in config file for key '{}' and string '{}'. Must be an integer".format(key, conf.get(section,key))) from err
 
+def find_files(env_location, potential_files, default_content="", create=False):
+    '''Find existent files based on folders name and file names.  
+
+    Arguments:  
+    - `env_location`: list of environment variable to use as a base path. Exemple: ['HOME', 'XDG_CONFIG_HOME', 'APPDATA', 'PWD']  
+    - `potential_files`: list of filenames. Exemple: ['.alt_job/alt_job.conf', 'alt_job.conf']  
+    - `default_content`: Write default content if the file does not exist  
+    - `create`: Create the file in the first existing env_location with default content if the file does not exist  
+    '''
+    potential_paths=[]
+    existent_files=[]
+    # build potential_paths of config file
+    for env_var in env_location:
+        if env_var in os.environ:
+            for file_path in potential_files:
+                potential_paths.append(os.path.join(os.environ[env_var],file_path))
+    # If file exist, add to list
+    for p in potential_paths:
+        if os.path.isfile(p):
+            existent_files.append(p)
+    # If no file foud and create=True, init new template config
+    if len(existent_files)==0 and create:
+        os.makedirs(os.path.dirname(potential_paths[0]), exist_ok=True)
+        with open(potential_paths[0],'w') as config_file:
+            config_file.write(default_content)
+        print("Init new file: %s"%(p))
+        existent_files.append(potential_paths[0])
+    return(existent_files)
+
+def find_config_files(create=False):
+    '''
+    Returns the location of existing `alt_job.conf` file at `./alt_job.conf` and/or `~/alt_job.conf` or under `~/.alt_job/` folder
+    '''
+    files=['.alt_job/alt_job.conf', 'alt_job.conf']
+    env=['HOME', 'XDG_CONFIG_HOME', 'APPDATA', 'PWD']
+    
+    return(find_files(env, files))
+
 # Configuration template -------------------------
 TEMPLATE_FILE="""
 
@@ -257,41 +295,3 @@ start_urls=["https://www.enviroemplois.org/offres-d-emploi?sector=&region=6&job_
     "https://www.enviroemplois.org/offres-d-emploi?sector=&region=3&job_kind=&employer="]
 
 """
-
-def find_files(env_location, potential_files, default_content="", create=False):
-    '''Find existent files based on folders name and file names.  
-
-    Arguments:  
-    - `env_location`: list of environment variable to use as a base path. Exemple: ['HOME', 'XDG_CONFIG_HOME', 'APPDATA', 'PWD']  
-    - `potential_files`: list of filenames. Exemple: ['.alt_job/alt_job.conf', 'alt_job.conf']  
-    - `default_content`: Write default content if the file does not exist  
-    - `create`: Create the file in the first existing env_location with default content if the file does not exist  
-    '''
-    potential_paths=[]
-    existent_files=[]
-    # build potential_paths of config file
-    for env_var in env_location:
-        if env_var in os.environ:
-            for file_path in potential_files:
-                potential_paths.append(os.path.join(os.environ[env_var],file_path))
-    # If file exist, add to list
-    for p in potential_paths:
-        if os.path.isfile(p):
-            existent_files.append(p)
-    # If no file foud and create=True, init new template config
-    if len(existent_files)==0 and create:
-        os.makedirs(os.path.dirname(potential_paths[0]), exist_ok=True)
-        with open(potential_paths[0],'w') as config_file:
-            config_file.write(default_content)
-        print("Init new file: %s"%(p))
-        existent_files.append(potential_paths[0])
-    return(existent_files)
-
-def find_config_files(create=False):
-    '''
-    Returns the location of existing `alt_job.conf` file at `./alt_job.conf` and/or `~/alt_job.conf` or under `~/.alt_job/` folder
-    '''
-    files=['.alt_job/alt_job.conf', 'alt_job.conf']
-    env=['HOME', 'XDG_CONFIG_HOME', 'APPDATA', 'PWD']
-    
-    return(find_files(env, files))

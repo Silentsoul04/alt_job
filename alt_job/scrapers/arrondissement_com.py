@@ -34,7 +34,7 @@ class Scraper_arrondissement_com(Scraper):
     def parse_full_job_page(self, response, job_dict):
         """
         @auto_job_url arrondissement.com
-        @scrape_not_none url title description apply_before job_type week_hours
+        @scrape_not_none url title description apply_before week_hours
         @returns items 1 1  
         """
         job_dict['description']=BeautifulSoup(response.xpath('//div[@id="fiche"]/div[contains(@class,"publication")]').get()).get_text()
