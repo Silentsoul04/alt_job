@@ -7,12 +7,15 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+from shutil import which
+
 BOT_NAME = 'alt_job'
 
 SPIDER_MODULES = ['alt_job.scrapers']
 
 DOWNLOAD_DELAY=6
 COOKIES_ENABLED=False
+
 ITEM_PIPELINES={
     'alt_job.pipelines.AddKeywordMatchesPipeline': 100
 }
@@ -28,7 +31,15 @@ SPIDER_CONTRACTS = {
     'alt_job.scrapers.contracts.AutoFillUrl': 10,
     'alt_job.scrapers.contracts.ReturnsValidSelectorList': 10,
     'alt_job.scrapers.contracts.ReturnsValidLink': 10,
+     'alt_job.scrapers.contracts.WithSelenium': 10,
 }
+
+SELENIUM_DRIVER_NAME = 'chrome'
+SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
+SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
+DOWNLOADER_MIDDLEWARES = {
+                'alt_job.middlewares.SeleniumMiddleware': 800
+            }
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'alt_job (+http://www.yourdomain.com)'

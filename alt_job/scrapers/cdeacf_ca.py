@@ -1,7 +1,5 @@
 import scrapy
 import urllib
-import requests
-import pdfplumber
 import tempfile
 from .base import Scraper
 from ..items import Job
@@ -53,11 +51,17 @@ class Scraper_cdeacf_ca(Scraper):
         main_job_link_url=response.xpath('//article[contains(@class,"node-offre-demploi")]//a/@href').get()
         # PDF detection
         if main_job_link_url.lower().endswith('.pdf'):
-            r = requests.get(main_job_link_url, stream=True)
-            with tempfile.NamedTemporaryFile('wb') as f:
-                f.write(r.content)
-                with pdfplumber.open(f.name) as pdf:
-                    job_dict['description']='\n\n'.join([p.extract_text() for p in pdf.pages])
+            try: 
+                import pdfplumber
+                import requests
+            except ImportError:
+                job_dict['description']='{}'.format(main_job_link_url)
+            else:    
+                r = requests.get(main_job_link_url, stream=True)
+                with tempfile.NamedTemporaryFile('wb') as f:
+                    f.write(r.content)
+                    with pdfplumber.open(f.name) as pdf:
+                        job_dict['description']='\n\n'.join([p.extract_text() for p in pdf.pages])
         else:
             job_dict['description']='{}'.format(main_job_link_url)
         return Job(job_dict)

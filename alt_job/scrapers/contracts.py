@@ -8,6 +8,7 @@ from scrapy import spiderloader
 from scrapy.utils import project
 from scrapy.selector import Selector
 from ..scrape import get_all_scrapers, scrape
+from scrapy_selenium import SeleniumRequest
 
 class ScrapeNotNone(Contract):
 
@@ -89,7 +90,14 @@ class AutoFillJobUrl(Contract):
         website=self.args[0]
         jobs = scrape(website, dict(load_full_jobs=False, load_all_new_pages=False))
         args['url'] = jobs[0]['url']
-        args['cb_kwargs']=dict(job_dict={'url':jobs[0]['url'], 'title':jobs[0]['title']})
+        args['cb_kwargs']=dict(job_dict=jobs[0])
         print("First {} job posting test URL is: {}".format(website, args['url']))
         return args
-                
+
+class WithSelenium(Contract):
+    """ Contract to set the request class to be SeleniumRequest for the current call back method to test
+
+    @with_selenium
+    """
+    name = 'with_selenium'
+    request_cls = SeleniumRequest

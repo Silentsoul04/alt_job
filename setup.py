@@ -25,7 +25,7 @@ setup(
     version=version['__version__'],
     packages=['alt_job','alt_job.scrapers'],
     install_requires=[
-          'pyasn1', 'scrapy-user-agents', 'pdfplumber', 'requests', 'tqdm', 'scrapy', 'bs4', 'XlsxWriter'
+          'pyasn1', 'scrapy-user-agents', 'scrapy', 'bs4', 'XlsxWriter', 'scrapy-selenium', 'requests', 'pdfplumber', 'tqdm'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

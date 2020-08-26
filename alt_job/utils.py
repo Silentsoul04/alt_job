@@ -10,7 +10,6 @@ import logging
 import os
 
 import functools
-import tqdm
 import concurrent.futures
 
 # Log handler
@@ -100,10 +99,10 @@ def get_xlsx_file_bytes(items, headers=None):
     with open(get_xlsx_file(items, headers).name, 'rb') as file:
         return file.read()
 
-def perform(func, data, func_args=None, asynch=False,  workers=None , progress=False):
+def perform(func, data, func_args=None, asynch=False,  workers=None , progress=False, desc='Loading...'):
         """
         Wrapper arround executable and the data list object.
-        Will execute the callable the list.
+        Will execute the callable on each object of the list.
 
         Parameters:  
         
@@ -112,40 +111,31 @@ def perform(func, data, func_args=None, asynch=False,  workers=None , progress=F
         - `func_args`: dict that will be passed by default to func in all calls.
         - `asynch`: execute the task asynchronously
         - `workers`: mandatory if asynch is true.
-        - `progress`: to show progress bar with ETA (tqdm).
+        - `progress`: to show progress bar with ETA (if tqdm installed).  
+        - `desc`: Message to print if progress=True  
 
         Returns a list of returned results
         """
-
         if not callable(func) :
             raise ValueError('func must be callable')
-
         #Setting the arguments on the function
         func = functools.partial(func, **(func_args if func_args is not None else {}))
-        
         #The data returned by function
         returned=list() 
-
         elements=data
-
-        #loging message if specified.
+        try: import tqdm
+        except ImportError: progress=False
         tqdm_args=dict()
-
         #The message will appear on loading bar if progress is True
         if progress is True :
-            tqdm_args=dict(desc='Scraping websites...', total=len(elements))
-    
+            tqdm_args=dict(desc=desc, total=len(elements))
         #Runs the callable on list on executor or by iterating
         if asynch == True :
             if isinstance(workers, int) :
                 if progress==True :
-                    
-                    #Need to call tqdm to have better support for concurrent futures executor
-                    # tqdm would load the whole bar intantaneously and not wait until the callable func returns. 
                     returned=list(tqdm.tqdm(concurrent.futures.ThreadPoolExecutor(
                     max_workers=workers ).map(
                         func, elements), **tqdm_args))
-                    
                 else:
                     returned=list(concurrent.futures.ThreadPoolExecutor(
                     max_workers=workers ).map(
@@ -153,11 +143,8 @@ def perform(func, data, func_args=None, asynch=False,  workers=None , progress=F
             else:
                 raise AttributeError('When asynch == True : You must specify a integer value for workers')
         else :
-
             if progress==True:
                 elements=tqdm.tqdm(elements, **tqdm_args)
-                
             for index_or_item in elements:
                 returned.append(func(index_or_item))
-
         return(returned)
