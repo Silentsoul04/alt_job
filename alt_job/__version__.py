@@ -1,4 +1,4 @@
 """
 Project version.
 """
-__version__='0.3.4.dev0'
+__version__='0.3.4'
