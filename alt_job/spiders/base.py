@@ -97,7 +97,7 @@ class Scraper(abc.ABC, scrapy.Spider):
                 yield scrapy.Request(url=url, callback=self.parse )
 
     def __init__(self, url=None, start_urls=None, db=None,
-        use_google_cache=False, use_selenium=False, selenium_wait_time=10,
+        use_google_cache=False, use_selenium=False, selenium_wait_time=5,
         load_full_jobs=False, load_all_new_pages=False):
 
         self.start_urls=[url] if url else start_urls if start_urls else type(self).start_urls

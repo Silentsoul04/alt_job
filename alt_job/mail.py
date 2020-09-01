@@ -13,7 +13,7 @@ import io
 import scrapy.mail
 import datetime
 from string import Template
-from .utils import get_valid_filename, log
+from .utils import get_valid_filename, init_log
 from .utils import get_xlsx_file_bytes
 from .items import Job
 from .__version__ import __version__
@@ -25,7 +25,7 @@ class MailSender():
     '''Send jobs alerts'''
 
     # *arg, **kwargs currently ignored
-    def __init__(self, smtphost, mailfrom, smtpuser, smtppass, smtpport, smtptls, mailto, *arg, **kwargs):
+    def __init__(self, smtphost, mailfrom, smtpuser, smtppass, smtpport, smtptls, mailto, log_level, *arg, **kwargs):
         if not isinstance(mailto, list):
             raise TypeError('mailto must be a list, not '+str(type(mailto)))
         self.smtphost=smtphost
@@ -35,6 +35,8 @@ class MailSender():
         self.smtpport=smtpport
         self.smtptls=smtptls
         self.mailto=mailto
+
+        self.log = init_log(log_level)
 
     def send_mail_alert(self, jobs, scraper_configs):
         '''Sending the report'''
@@ -47,14 +49,14 @@ class MailSender():
         body = self.build_message(jobs, scraper_configs)
         message.attach(MIMEText(body, 'html'))
 
-        log.debug('Mail HTML :\n'+body)
+        self.log.debug('Mail HTML :\n'+body)
 
         # Attach excel file
         attachment=MIMEApplication(get_xlsx_file_bytes(items=jobs), Name=get_valid_filename(message['Subject'])+'.xlsx')
         attachment.add_header("Content-Disposition", "attachment; filename={}".format(get_valid_filename(message['Subject'])+'.xlsx'))
         message.attach(attachment)
 
-        log.info('Sending email digest')
+        self.log.info('Sending email digest')
         server=smtplib.SMTP(host=self.smtphost, port=self.smtpport)
         server.ehlo_or_helo_if_needed()
         # SSL

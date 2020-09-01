@@ -8,7 +8,7 @@ from .config import AltJobOptions, TEMPLATE_FILE
 from .db import  JsonDataBase
 from .mail import MailSender
 from .items import Job
-from .utils import log, init_log, perform, get_xlsx_file
+from .utils import init_log, perform, get_xlsx_file
 
 class AltJob(object):
 
@@ -24,10 +24,10 @@ class AltJob(object):
             print(TEMPLATE_FILE)
             exit(0)
 
-        init_log(self.config['alt_job']['log_level'])
+        self.log = init_log(self.config['alt_job']['log_level'])
 
         self.print_version()
-        log.debug('Configuration\n'+json.dumps(dict(self.config), indent=4))
+        self.log.debug('Configuration\n'+json.dumps(dict(self.config), indent=4))
 
         # init database
         self.db=None
@@ -37,7 +37,7 @@ class AltJob(object):
             self.db=JsonDataBase()
 
         if len(self.config['alt_job']['enabled_scrapers'] )>0:
-            log.info("Scraping websites: {}".format(', '.join(self.config['alt_job']['enabled_scrapers'])))
+            self.log.info("Scraping websites: {}".format(', '.join(self.config['alt_job']['enabled_scrapers'])))
         else:
             print("No website to scrape! Please configure at least one scraper in your config file")
             exit(1)
@@ -59,30 +59,30 @@ class AltJob(object):
         new_jobs = [ Job(job) for job in scraped_data if not self.db.find_job(job) ]
         older_jobs = [ c for c in scraped_data if c not in new_jobs ]
         
-        log.debug('Older jobs are\n{}'.format(older_jobs))
-        log.debug('New jobs are\n{}'.format(new_jobs))
+        self.log.debug('Older jobs are\n{}'.format(older_jobs))
+        self.log.debug('New jobs are\n{}'.format(new_jobs))
 
-        log.info("Found {} new jobs".format(len(new_jobs)))
+        self.log.info("Found {} new jobs".format(len(new_jobs)))
         
         # Write all jobs to database
         self.db.update_and_write_jobs(older_jobs+new_jobs)
         if self.db.filepath!='null':
-            log.info('Jobs write to file: {}'.format(self.db.filepath))
+            self.log.info('Jobs write to file: {}'.format(self.db.filepath))
 
         if new_jobs:
 
             if self.config['alt_job']['xlsx_output']:
                 file = get_xlsx_file(new_jobs)
                 copyfile(file.name, self.config['alt_job']['xlsx_output'])
-                log.info("XLSX file wrote at {}".format(self.config['alt_job']['xlsx_output']))
+                self.log.info("XLSX file wrote at {}".format(self.config['alt_job']['xlsx_output']))
             
             if self.config['alt_job']['smtphost']:
                 mail=MailSender(**self.config['alt_job'])
                 mail.send_mail_alert(new_jobs, scraper_configs=self.get_scraper_configs_string(new_jobs))
             else:
-                log.info("Configuration 'smtphost' not configured, not sending email")
+                self.log.info("Configuration 'smtphost' not configured, not sending email")
         else:
-            log.info("No new jobs, not sending email")
+            self.log.info("No new jobs, not sending email")
 
     def get_scraper_configs_string(self, new_jobs):
         string=""
@@ -91,7 +91,7 @@ class AltJob(object):
             urls.extend([self.config[scraper]['url']] if 'url' in self.config[scraper] else [])
             urls.extend(self.config[scraper]['start_urls'] if 'start_urls' in self.config[scraper] else [])
 
-            string+="{name} (Start URLs: {urls}, Load: {load}) | ".format(
+            string+="{name} (URL: {urls}, Load: {load}) | ".format(
                     name=scraper, 
                     urls=', '.join('<a href="{url}"> {i}</a>'.format(url=url, i=urls.index(url)+1) for url in urls), 
                     load='Full' if ('load_full_jobs' in self.config[scraper] and self.config[scraper]['load_full_jobs'] and 

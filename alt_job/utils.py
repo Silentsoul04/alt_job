@@ -13,9 +13,9 @@ import functools
 import concurrent.futures
 
 # Utility methods
-def init_log(verb_level='INFO', name=None, logfile=None, nostd=False):
+def init_log(verb_level='INFO', name='alt_job', logfile=None, nostd=False):
     log = logging.getLogger(name=name)
-    format_string='%(asctime)s [alt_job] %(levelname)s: %(message)s'
+    format_string='%(asctime)s [{}] %(levelname)s: %(message)s'.format(name)
     # Add stdout: configurable
     log.setLevel(verb_level)
     std = logging.StreamHandler(sys.stdout)
@@ -30,9 +30,6 @@ def init_log(verb_level='INFO', name=None, logfile=None, nostd=False):
         fh.setFormatter(logging.Formatter(format_string))
         log.addHandler(fh)
     return (log)
-
-# Global Log handler
-log = init_log(name='Alt Job')
 
 def parse_timedelta(time_str):
     """
