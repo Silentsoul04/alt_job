@@ -15,14 +15,16 @@ jobs:
         python-version: [3.8]
         os: [macos-latest]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-
-    - name: Setup chromedriver
+        
+    - name: Install chromedriver
     - uses: nanasess/setup-chromedriver@master
+      
+    - name: Setup chromedriver
     - run: |
         export DISPLAY=:99
         chromedriver --url-base=/wd/hub &
