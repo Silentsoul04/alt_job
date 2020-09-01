@@ -14,7 +14,6 @@ job_file_write_lock = threading.Lock()
 class JsonDataBase():
     '''Interface to JSON database file. Work to write all nice to file in a thread safe way'''
     def __init__(self, jobs_filepath=""):
-        
         if not jobs_filepath : 
             jobs_filepath=self.find_jobs_file(create=True)
         self.filepath=jobs_filepath

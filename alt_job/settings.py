@@ -11,7 +11,7 @@ from shutil import which
 
 BOT_NAME = 'alt_job'
 
-SPIDER_MODULES = ['alt_job.scrapers']
+SPIDER_MODULES = ['alt_job.spiders']
 
 DOWNLOAD_DELAY=6
 COOKIES_ENABLED=False
@@ -26,17 +26,17 @@ DOWNLOADER_MIDDLEWARES={
 FAKEUSERAGENT_FALLBACK='Mozilla'
 
 SPIDER_CONTRACTS = {
-    'alt_job.scrapers.contracts.ScrapeNotNone': 10,
-    'alt_job.scrapers.contracts.AutoFillJobUrl': 10,
-    'alt_job.scrapers.contracts.AutoFillUrl': 10,
-    'alt_job.scrapers.contracts.ReturnsValidSelectorList': 10,
-    'alt_job.scrapers.contracts.ReturnsValidLink': 10,
-     'alt_job.scrapers.contracts.WithSelenium': 10,
+    'alt_job.contracts.ScrapeNotNone': 10,
+    'alt_job.contracts.AutoFillJobUrl': 10,
+    'alt_job.contracts.AutoFillUrl': 10,
+    'alt_job.contracts.ReturnsValidSelectorList': 10,
+    'alt_job.contracts.ReturnsValidLink': 10,
+    'alt_job.contracts.WithSelenium': 10,
 }
 
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('chromedriver')
-SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_DRIVER_ARGUMENTS=['--headless']
 DOWNLOADER_MIDDLEWARES = {
                 'alt_job.middlewares.SeleniumMiddleware': 800
             }

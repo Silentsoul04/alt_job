@@ -23,7 +23,10 @@ setup(
     url='https://github.com/tristanlatr/alt_job',
     maintainer='tristanlatr',
     version=version['__version__'],
-    packages=['alt_job','alt_job.scrapers'],
+    packages=['alt_job','alt_job.spiders'],
+    entry_points = {
+        'console_scripts': ['alt_job=alt_job.__main__:main'],
+    },
     install_requires=[
           'pyasn1', 'scrapy-user-agents', 'scrapy', 'bs4', 'XlsxWriter', 'scrapy-selenium', 'requests', 'pdfplumber', 'tqdm'
     ],

@@ -1,4 +1,3 @@
-import inspect
 import urllib.parse
 from bs4 import BeautifulSoup
 # from scrapy.http import Request
@@ -33,9 +32,6 @@ class Scraper_charityvillage_com(Scraper):
         """
         return response.xpath('//ul[contains(@class,"job-search-results")]/li')
 
-    #  Return no element :/ But Xpath matches the list when checking in browser
-    #  might need to use Selenium driver to run javascript code
-
     def get_job_dict(self, selector):
         return {
             'url':selector.xpath('div/div[contains(@class, "cl-job-cta")]/a/@href').get(), 
@@ -69,5 +65,6 @@ class Scraper_charityvillage_com(Scraper):
                 response.request.meta['driver'].execute_script("arguments[0].click();", next_buttons[0])
             return response.request.meta['driver'].current_url
         else:
-            # another look of the listing page show the next button with a link...
-            return response.xpath('//ul[contains(@class, "page-numbers")]/li[last()]/a/@href').get()
+            return None
+            # # There is another look of the listing page (https://charityvillage.com/jobs)... Wich is not supported.
+            # return response.xpath('//ul[contains(@class, "page-numbers")]/li[last()]/a/@href').get()

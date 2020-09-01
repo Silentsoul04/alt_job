@@ -7,7 +7,7 @@ from scrapy.exceptions import ContractFail
 from scrapy import spiderloader
 from scrapy.utils import project
 from scrapy.selector import Selector
-from ..scrape import get_all_scrapers, scrape
+from .scrape import get_all_scrapers, scrape
 from scrapy_selenium import SeleniumRequest
 
 class ScrapeNotNone(Contract):
@@ -25,7 +25,7 @@ class ScrapeNotNone(Contract):
                 missing = [arg for arg in self.args if arg not in ItemAdapter(x) or ItemAdapter(x)[arg]==None]
                 if missing:
                     missing_str = ", ".join(missing)
-                    raise ContractFail("None fields: %s. Item is %s" % (missing_str, x))
+                    raise ContractFail("Missing or None fields: %s. Item is %s" % (missing_str, x))
 
 class ReturnsValidSelectorList(Contract):
     
@@ -57,7 +57,7 @@ class ReturnsValidLink(Contract):
             output=output[0]
         if not isinstance(output, str):
             raise ContractFail("Output is not a valid String. Output is {}".format(output))
-        if 'http' not in output:
+        if len(re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', output)) < 1:
             raise ContractFail("Output is not a valid link. Output is {}".format(output))
 
 class AutoFillUrl(Contract):

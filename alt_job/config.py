@@ -3,7 +3,7 @@ import collections
 import os
 import json
 import copy
-from .utils import parse_timedelta, log
+from .utils import parse_timedelta
 from .scrape import get_all_scrapers
 import argparse
 
@@ -50,13 +50,14 @@ class AltJobOptions(collections.UserDict):
         # Arguments that overwrites [alt_job] config values
         parser2.add_argument("-x", "--xlsx_output", metavar='<File path>', help='Write all NEW jobs to Excel file')
         parser2.add_argument("-s", "--enabled_scrapers", metavar='<Website>', help="List of enabled scrapers. By default it's all scrapers configured in config file(s)", nargs='+')
-        parser2.add_argument("--jobs_datafile", metavar='<File path>', 
+        parser2.add_argument("-j", "--jobs_datafile", metavar='<File path>', 
             help="""JSON file to store ALL jobs data. Default is '~/jobs.json'. 
             Use 'null' keyword to disable the storage of the datafile, all jobs will be considered as new and will be loaded""")
         parser2.add_argument("--workers", metavar='<Number>', help="Number of websites to scrape asynchronously", type=int)
-        parser2.add_argument("--full", action="store_true", help="Enable load_all_jobs and load_all_new_pages on all scrapers.")
+        parser2.add_argument("--full", "--load_all_jobs",action="store_true", help="Load the full job description page to parse additionnal data. This settings is applied to all scrapers")
+        parser2.add_argument("--all", "--load_all_new_pages",action="store_true", help="Load new job listing pages until older jobs are found. This settings is applied to all scrapers")
         parser2.add_argument("--quick", "--no_load_all_jobs", action='store_true', help='Do not load the full job description page to parse additionnal data (Much more faster). This settings is applied to all scrapers')
-        parser2.add_argument("--first_page_only", "--no_load_all_new_pages", action='store_true', help='Do not load new job listing pages until older jobs are found. This settings is applied to all scrapers')
+        parser2.add_argument("--first", "--no_load_all_new_pages", action='store_true', help='Load only the first job listing page. This settings is applied to all scrapers')
         parser2.add_argument("--mailto", metavar="<Email>", help='Emails to notify of new job postings', nargs='+')
         parser2.add_argument("--log_level", metavar='<String>', help='Alt job log level. Exemple: DEBUG')
         parser2.add_argument("--scrapy_log_level", metavar='<String>', help='Scrapy log level. Exemple: DEBUG')
@@ -67,20 +68,23 @@ class AltJobOptions(collections.UserDict):
         config_file['alt_job'].update(vars(args2))
         config_file['alt_job'].update(vars(args1))
 
-        if args2.full and (args2.first_page_only or args2.quick):
-            raise ValueError("Incompatible options: --full is enable with --quick or --first_page_only")
+        if args2.full and args2.quick:
+            raise ValueError("Incompatible options: --full is enable with --quick")
+        if args2.full and args2.quick:
+            raise ValueError("Incompatible options: --all is enable with --first")
 
-        # Overwriting load_all_new_pages and load_full_jobs if passed --first_page_only or --quick
-        if args2.first_page_only:
+        # Overwriting load_all_new_pages and load_full_jobs if passed --first or --quick
+        if args2.first:
             for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
                 config_file[website]['load_all_new_pages']=False
         if args2.quick:
             for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
                 config_file[website]['load_full_jobs']=False
-        # --full
         if args2.full:
             for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
                 config_file[website]['load_full_jobs']=True
+        if args2.all:
+            for website in [ k for k in config_file.keys() if k in get_all_scrapers() ]:
                 config_file[website]['load_all_new_pages']=True
         
         self.data=config_file
@@ -126,7 +130,7 @@ class ConfigurationFile(collections.UserDict):
             if not self.files:
                 self.files=find_config_files()
                 if not self.files:
-                    log.info("Could not find default config: `~/.alt_job/alt_job.conf`, `~/alt_job.conf` or `./alt_job.conf`")
+                    print("Could not find default config: `~/.alt_job/alt_job.conf`, `~/alt_job.conf` or `./alt_job.conf`")
             else:
                 for f in self.files:
                     try :

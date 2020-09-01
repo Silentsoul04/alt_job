@@ -29,7 +29,7 @@ Implementation of this software
 
 ### Supported websites
 
-Alt Job is wrote in an extensible way, only 30 lines of code are required to write a new job posting site scraper! Focused on Canada/Québec for now, please [contribute](https://github.com/tristanlatr/alt_job/blob/master/CONTRIBUTE.md) to improve the software or expand the scope 🙂
+Alt Job is wrote in an extensible way, only 30 lines of code are required to support a new job posting site! Focused on Canada/Québec for now, please [contribute](https://github.com/tristanlatr/alt_job/blob/master/CONTRIBUTE.md) to improve the software or expand the scope 🙂
 
 Supports the following websites: 
 - [arrondissement.com](https://www.arrondissement.com/montreal-list-emplois/t1/pc1/): Québec (full parsing) 
@@ -38,9 +38,9 @@ Supports the following websites:
 - [goodwork.ca](https://www.goodwork.ca): Québec and Canada (full parsing, form search still TODO)  
 - [engages.ca](https://www.engages.ca): Québec (paging TODO)  
 - [enviroemplois.org](https://www.enviroemplois.org): Québec (full parsing)  
+- [charityvillage.com](https://charityvillage.com): Québec and Canada (full parsing, require chromedriver)  
 
-The support of the following websites is on the TODO: 
-- [charityvillage.com](https://charityvillage.com): Québec and Canada    
+The support of the following websites is on the TODO:   
 - [undpjobs.net](https://undpjobs.net/country/Canada): World Wide
 
 ### Install
@@ -86,7 +86,7 @@ mailto=["you@gmail.com"]
 
 ##### Scrapers #####
 
-# Scraper name
+# Website domain
 [goodwork.ca]
 # URL to start the scraping, required for all scrapers
 url=https://www.goodwork.ca/jobs.php?prov=QC
@@ -133,7 +133,6 @@ python3 -m alt_job -c /home/user/Jobs/alt_job.conf
 Some of the config options can be overwritten with CLI arguments.
 
 ```
-  -h, --help            show this help message and exit
   -c <File path> [<File path> ...], --config_file <File path> [<File path> ...]
                         configuration file(s). Default locations will be
                         checked and loaded if file exists:
@@ -147,23 +146,28 @@ Some of the config options can be overwritten with CLI arguments.
   -s <Website> [<Website> ...], --enabled_scrapers <Website> [<Website> ...]
                         List of enabled scrapers. By default it's all scrapers
                         configured in config file(s) (default: [])
-  --jobs_datafile <File path>
+  -j <File path>, --jobs_datafile <File path>
                         JSON file to store ALL jobs data. Default is
                         '~/jobs.json'. Use 'null' keyword to disable the
                         storage of the datafile, all jobs will be considered
                         as new and will be loaded (default: )
   --workers <Number>    Number of websites to scrape asynchronously (default:
                         5)
-  --full                Enable load_all_jobs and load_all_new_pages on all
-                        scrapers. (default: False)
+  --full, --load_all_jobs
+                        Load the full job description page to parse
+                        additionnal data. This settings is applied to all
+                        scrapers (default: False)
+  --all, --load_all_new_pages
+                        Load new job listing pages until older jobs are found.
+                        This settings is applied to all scrapers (default:
+                        False)
   --quick, --no_load_all_jobs
                         Do not load the full job description page to parse
                         additionnal data (Much more faster). This settings is
                         applied to all scrapers (default: False)
-  --first_page_only, --no_load_all_new_pages
-                        Do not load new job listing pages until older jobs are
-                        found. This settings is applied to all scrapers
-                        (default: False)
+  --first, --no_load_all_new_pages
+                        Load only the first job listing page. This settings is
+                        applied to all scrapers (default: False)
   --mailto <Email> [<Email> ...]
                         Emails to notify of new job postings (default: [])
   --log_level <String>  Alt job log level. Exemple: DEBUG (default: INFO)

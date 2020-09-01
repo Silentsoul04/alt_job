@@ -6,6 +6,8 @@ from scrapy_selenium import SeleniumRequest
 from ..items import Job
 from ..utils import log
 
+SCROLL_DOWN='window.scrollTo(0,document.body.scrollHeight);'
+
 class Scraper(abc.ABC, scrapy.Spider):
     """
     Base class for all scrapers.  
@@ -88,12 +90,14 @@ class Scraper(abc.ABC, scrapy.Spider):
                 url='https://webcache.googleusercontent.com/search?q=cache:{}'.format(url)
             if self.use_selenium:
                 # Auto scroll down
-                yield SeleniumRequest(url=url, callback=self.parse, wait_time=self.selenium_wait_time , script='window.scrollTo(0,document.body.scrollHeight);')
+                yield SeleniumRequest(url=url, callback=self.parse, 
+                    wait_time=self.selenium_wait_time , 
+                    script=SCROLL_DOWN)
             else:
                 yield scrapy.Request(url=url, callback=self.parse )
 
     def __init__(self, url=None, start_urls=None, db=None,
-        use_google_cache=False, use_selenium=False, selenium_wait_time=6,
+        use_google_cache=False, use_selenium=False, selenium_wait_time=10,
         load_full_jobs=False, load_all_new_pages=False):
 
         self.start_urls=[url] if url else start_urls if start_urls else type(self).start_urls
@@ -146,7 +150,7 @@ class Scraper(abc.ABC, scrapy.Spider):
                         yield SeleniumRequest(url=job_dict['url'], 
                             callback=self.parse_full_job_page,
                             cb_kwargs=dict(job_dict=job_dict),
-                            wait_time=self.selenium_wait_time, script='window.scrollTo(0,document.body.scrollHeight);')
+                            wait_time=self.selenium_wait_time, script=SCROLL_DOWN)
                     else:
                         yield response.follow(url=job_dict['url'], 
                             callback=self.parse_full_job_page,
@@ -187,7 +191,7 @@ class Scraper(abc.ABC, scrapy.Spider):
                         yield SeleniumRequest(
                             url=self.get_next_page_url(response),
                             callback=self.parse,
-                            wait_time=self.selenium_wait_time, script='window.scrollTo(0,document.body.scrollHeight);')
+                            wait_time=self.selenium_wait_time, script=SCROLL_DOWN)
                     else:
                         yield response.follow(
                             url=self.get_next_page_url(response),

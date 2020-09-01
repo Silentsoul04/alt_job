@@ -16,9 +16,9 @@ This Python module is build on top of [Scrapy](https://scrapy.org). If you don't
 
 **Writing a new scraper**
 
-The only thing you have to do to support a new website is to drop the the new scraper file in `alt_job/scrapers/` folder.  
-The new Scraper must extend `alt_job.scrapers.base.Scraper` which extends `scrapy.Spider`.  
-Read carefully the [base Scraper class](https://github.com/tristanlatr/alt_job/blob/master/alt_job/scrapers/base.py).  
+The only thing you have to do to support a new website is to drop the the new scraper file in `alt_job/spiders/` folder.  
+The new Scraper must extend `alt_job.spiders.base.Scraper` which extends `scrapy.Spider`.  
+Read carefully the [base Scraper class](https://github.com/tristanlatr/alt_job/blob/master/alt_job/spiders/base.py).  
 Fork the repo, hack hack hack and pull request.  
 I recommend [xpath-helper](https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl?hl=en) to check the validity of your xpaths.  
 
@@ -28,7 +28,7 @@ Easy !
 
 This includes automatic docstrings testing, [Contracts](https://docs.scrapy.org/en/latest/topics/contracts.html).  
 
-Run tests with `scrapy check exemple.coma`
+Run tests with (i.e.) `scrapy check goodwork.ca`
 
 ```python
 import scrapy
