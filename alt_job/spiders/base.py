@@ -2,8 +2,9 @@ import abc
 import re
 import scrapy
 import time
-
-from scrapy_selenium import SeleniumRequest
+from scrapy import Request
+try: from scrapy_selenium import SeleniumRequest
+except ImportError: SeleniumRequest=Request
 from ..items import Job
 from ..utils import init_log
 
