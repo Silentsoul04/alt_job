@@ -1,19 +1,25 @@
-import scrapy_selenium
+from scrapy import Request
+try: 
+    from scrapy_selenium import SeleniumMiddleware as SeleniumMiddlewareBase
+    from scrapy_selenium import SeleniumRequest
+except ImportError: 
+    SeleniumMiddlewareBase=object
+    SeleniumRequest=Request
 import time
 import random
 
 # Extends Selenium to respect scrapy config https://github.com/clemfromspace/scrapy-selenium/issues/36
-class SeleniumMiddleware(scrapy_selenium.SeleniumMiddleware):
+class SeleniumMiddleware(SeleniumMiddlewareBase):
     def process_request(self, request, spider):
-        if isinstance(request, scrapy_selenium.SeleniumRequest):
+        if isinstance(request, SeleniumRequest):
             delay = spider.settings.getint('DOWNLOAD_DELAY')
             randomize_delay = spider.settings.getbool('RANDOMIZE_DOWNLOAD_DELAY')
             if delay:
                 if randomize_delay:
                     delay = random.uniform(0.5 * delay, 1.5 * delay)
                 time.sleep(delay)
-        return super().process_request(request, spider)
-
+        try: return super().process_request(request, spider)
+        except AttributeError: return None
 #    SCRAPY TOR MIDLEWARE
 # https://github.com/elvesrodrigues/scrapy-tor-proxy-rotation
 
