@@ -2,9 +2,10 @@ import abc
 import re
 import scrapy
 import time
+
 from scrapy_selenium import SeleniumRequest
 from ..items import Job
-from ..utils import log
+from ..utils import init_log
 
 SCROLL_DOWN='window.scrollTo(0,document.body.scrollHeight);'
 
@@ -108,6 +109,8 @@ class Scraper(abc.ABC, scrapy.Spider):
         self.use_selenium=use_selenium
         self.selenium_wait_time=selenium_wait_time
 
+        self.log=init_log(name="alt_job.spiders/{}".format(self.name))
+
     def parse(self, response):
         """
         Template method for all scrapers.  
@@ -164,16 +167,16 @@ class Scraper(abc.ABC, scrapy.Spider):
         if self.load_full_jobs:
             if type(self).parse_full_job_page == Scraper.parse_full_job_page:
                 if self.load_all_new_pages==False:
-                    print("Scraped {} jobs from {}. Scraper {} does not support load_full_jobs=True and load_all_new_pages=False, some new job postings and job informations might be missing".format(len(page_jobs), response.url, self.name))
+                    self.log.info("Scraped {} jobs from {}. Scraper {} does not support load_full_jobs=True and load_all_new_pages=False, some new job postings and job informations might be missing".format(len(page_jobs), response.url, self.name))
                 else:
-                    print("Scraped {} jobs from {}. Scraper {} does not support load_full_jobs=True, some informations might be missing".format(len(page_jobs), response.url, self.name))
+                    self.log.info("Scraped {} jobs from {}. Scraper {} does not support load_full_jobs=True, some informations might be missing".format(len(page_jobs), response.url, self.name))
             else:
-                print("Scraping {} jobs from {}...".format(len(page_jobs), response.url))
+                self.log.info("Scraping {} jobs from {}...".format(len(page_jobs), response.url))
         else:
             if self.load_all_new_pages==False:
-                print("Scraped {} jobs from {}. load_all_new_pages=False and load_full_jobs=False, some new job postings and job informations might be missing".format(len(page_jobs), response.url))
+                self.log.info("Scraped {} jobs from {}. load_all_new_pages=False and load_full_jobs=False, some new job postings and job informations might be missing".format(len(page_jobs), response.url))
             else:
-                print("Scraped {} jobs from {}. load_full_jobs=False, some informations might be missing".format(len(page_jobs), response.url))
+                self.log.info("Scraped {} jobs from {}. load_full_jobs=False, some informations might be missing".format(len(page_jobs), response.url))
        
         """
         If all page jobs are new and 
@@ -201,4 +204,4 @@ class Scraper(abc.ABC, scrapy.Spider):
                         # Last page loaded
                         pass
                     else:
-                        print("Scraper {} does not support load_all_new_pages=True, some new job postings might be missing".format(self.name))
+                        self.log.info("Scraper {} does not support load_all_new_pages=True, some new job postings might be missing".format(self.name))

@@ -25,7 +25,7 @@ This project is still under construction! 🚧
 Implementation of this software
 
 -  Montréal / Québec:  
-[alt_job_mtl](https://groups.google.com/u/1/g/alt_job_mtl) Google Group. Join to receive a daily digest of new Montréal and Province of Québec job postings.  
+[alt_job_mtl](https://groups.google.com/forum/?utm_medium=email&utm_source=footer#!forum/alt_job_mtl) Google Group. Join to receive a daily digest of new Montréal and Province of Québec job postings.  
 
 ### Supported websites
 
@@ -39,6 +39,8 @@ Supports the following websites:
 - [engages.ca](https://www.engages.ca): Québec (paging TODO)  
 - [enviroemplois.org](https://www.enviroemplois.org): Québec (full parsing)  
 - [charityvillage.com](https://charityvillage.com): Québec and Canada (full parsing, require chromedriver)  
+- [aqoci.qc.ca](https://www.aqoci.qc.ca/?-emplois-et-benevolat-): Québec, Internationnal (full parsing)
+
 
 The support of the following websites is on the TODO:   
 - [undpjobs.net](https://undpjobs.net/country/Canada): World Wide

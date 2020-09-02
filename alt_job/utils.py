@@ -13,7 +13,7 @@ import functools
 import concurrent.futures
 
 # Utility methods
-def init_log(verb_level='INFO', name='alt_job', logfile=None, nostd=False):
+def init_log(verb_level='INFO', name=__name__, logfile=None, nostd=False):
     log = logging.getLogger(name=name)
     format_string='%(asctime)s [{}] %(levelname)s: %(message)s'.format(name)
     # Add stdout: configurable

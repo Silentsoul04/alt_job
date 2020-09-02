@@ -36,7 +36,7 @@ class MailSender():
         self.smtptls=smtptls
         self.mailto=mailto
 
-        self.log = init_log(log_level)
+        self.log = init_log(log_level, name='alt_job.mail')
 
     def send_mail_alert(self, jobs, scraper_configs):
         '''Sending the report'''

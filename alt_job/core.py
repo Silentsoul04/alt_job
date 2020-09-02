@@ -24,7 +24,7 @@ class AltJob(object):
             print(TEMPLATE_FILE)
             exit(0)
 
-        self.log = init_log(self.config['alt_job']['log_level'])
+        self.log = init_log(self.config['alt_job']['log_level'], name='alt_jpb')
 
         self.print_version()
         self.log.debug('Configuration\n'+json.dumps(dict(self.config), indent=4))
@@ -91,9 +91,9 @@ class AltJob(object):
             urls.extend([self.config[scraper]['url']] if 'url' in self.config[scraper] else [])
             urls.extend(self.config[scraper]['start_urls'] if 'start_urls' in self.config[scraper] else [])
 
-            string+="{name} (URL: {urls}, Load: {load}) | ".format(
+            string+="{name} (URL: {urls}, {load}) | ".format(
                     name=scraper, 
-                    urls=', '.join('<a href="{url}"> {i}</a>'.format(url=url, i=urls.index(url)+1) for url in urls), 
+                    urls=', '.join(['<a href="{url}"> {i}</a>'.format(url=url, i=urls.index(url)+1) for url in urls] if urls else ["Default"]), 
                     load='Full' if ('load_full_jobs' in self.config[scraper] and self.config[scraper]['load_full_jobs'] and 
                         'load_all_new_pages' in self.config[scraper] and self.config[scraper]['load_all_new_pages']) else 'Full, first page only' if (
                         'load_full_jobs' in self.config[scraper] and self.config[scraper]['load_full_jobs']) else 'Quick')
