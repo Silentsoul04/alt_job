@@ -28,8 +28,14 @@ setup(
         'console_scripts': ['alt_job=alt_job.__main__:main'],
     },
     install_requires=[
-          'pyasn1', 'scrapy-user-agents', 'scrapy', 'bs4', 'XlsxWriter', 'scrapy-selenium', 'requests', 'pdfplumber', 'tqdm'
+          'pyasn1', 'scrapy-user-agents', 'scrapy', 'bs4', 'XlsxWriter'
     ],
+    extras_require={
+        'selenium':['scrapy-selenium'],
+        'pdf':['pdfplumber', 'requests'],
+        'progress':['tqdm'],
+        'all': ['scrapy-selenium', 'requests', 'pdfplumber', 'tqdm']
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
     ],

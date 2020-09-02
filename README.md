@@ -48,7 +48,7 @@ The support of the following websites is on the TODO:
 ### Install
 
 ```bash
-python3 -m pip install alt_job
+python3 -m pip install alt_job[all]
 ```
 Require Python >= 3.6  
 

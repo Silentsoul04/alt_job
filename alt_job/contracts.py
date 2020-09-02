@@ -8,7 +8,6 @@ from scrapy import spiderloader
 from scrapy.utils import project
 from scrapy.selector import Selector
 from .scrape import get_all_scrapers, scrape
-from scrapy_selenium import SeleniumRequest
 
 class ScrapeNotNone(Contract):
 
@@ -100,4 +99,8 @@ class WithSelenium(Contract):
     @with_selenium
     """
     name = 'with_selenium'
+    # Make selenium an extra dependency
+    from scrapy import Request
+    try: from scrapy_selenium import SeleniumRequest
+    except ImportError: SeleniumRequest=Request
     request_cls = SeleniumRequest

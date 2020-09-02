@@ -1,12 +1,13 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: test
+name: test-macos
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -24,7 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install Alt Job
-      run: python3 setup.py install
+      run: python3 -m pip install -e .\[all\] 
 
     - name: Test with scrapy check
-      run: scrapy check
+      run: scrapy check goodwork.ca engages.ca arrondissement.com cdeacf.ca chantier.qc.ca enviroemplois.org 
