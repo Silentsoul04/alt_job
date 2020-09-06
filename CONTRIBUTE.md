@@ -10,7 +10,7 @@ If you like the project and think you could help with making it better, there ar
 - Spread a word about the project to your friends, blogs or any other channels
 - Any other things you could imagine
 
-Any contribution would be of great help and I will highly appreciate it! If you have any questions, please create a new issue, or contact me via trislatr@gmail.com
+Any contribution would be of great help and I will highly appreciate it! If you have any questions, please create a new issue.  
 
 This Python module is build on top of [Scrapy](https://scrapy.org). If you don't know about it, get familliar with how Scrapy works.
 

@@ -16,13 +16,11 @@
 
 Atl Job scrapes a bunch of green/social/alternative websites to send digest of new job postings by email. Also generates an Excel file with job postings informations.   
 
-The scraped data include: **job title, type, salary, week_hours, date posted, apply before date and full description**.  Additionnaly, a set of keywords matches are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens))  
+The scraped data include: **job title, type, salary, week_hours, date posted, apply before date and full description**.  Additionnaly, a set of [keywords matches](https://github.com/tristanlatr/alt_job/blob/master/alt_job/pipelines.py) are automatically checked against all jobs and added as a new column.  (See [screens](https://github.com/tristanlatr/alt_job/blob/master/screens))  
 
 This project is still under construction! 🚧
 
-### Mailling lists 🔥
-
-Implementation of this software
+### Job postings mailling lists  🔥
 
 -  Montréal / Québec:  
 [alt_job_mtl](https://groups.google.com/forum/?utm_medium=email&utm_source=footer#!forum/alt_job_mtl) Google Group. Join to receive a daily digest of new Montréal and Province of Québec job postings.  
@@ -47,9 +45,11 @@ The support of the following websites is on the TODO:
 
 ### Install
 
+
 ```bash
-python3 -m pip install alt_job[all]
+python3 -m pip install 'alt_job[all]'
 ```
+
 Require Python >= 3.6  
 
 ### Configure
