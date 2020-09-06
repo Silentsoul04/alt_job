@@ -24,7 +24,7 @@ class AltJob(object):
             print(TEMPLATE_FILE)
             exit(0)
 
-        self.log = init_log(self.config['alt_job']['log_level'], name='alt_jpb')
+        self.log = init_log(self.config['alt_job']['log_level'], name='alt_job')
 
         self.print_version()
         self.log.debug('Configuration\n'+json.dumps(dict(self.config), indent=4))
