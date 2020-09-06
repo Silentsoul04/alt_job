@@ -42,10 +42,13 @@ Supports the following websites:
 
 The support of the following websites is on the TODO:   
 - [undpjobs.net](https://undpjobs.net/country/Canada): World Wide
+- [eco.ca]()
+- [novae.ca]()
+- [quebecmunicipal.qc.ca]()
 
 ### Install
 
-
+*Install all requirements (see [setup.py](https://github.com/tristanlatr/alt_job/blob/master/setup.py) for more details)*
 ```bash
 python3 -m pip install 'alt_job[all]'
 ```

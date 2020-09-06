@@ -31,10 +31,11 @@ setup(
           'pyasn1', 'scrapy-user-agents', 'scrapy', 'bs4', 'XlsxWriter'
     ],
     extras_require={
-        'selenium':['scrapy-selenium'],
-        'pdf':['pdfplumber', 'requests'],
-        'progress':['tqdm'],
-        'all': ['scrapy-selenium', 'requests', 'pdfplumber', 'tqdm']
+        'all': ['scrapy-selenium', 'requests', 'pdfplumber'],
+
+        'selenium':['scrapy-selenium'],         # Required by charityvillage.com scraper
+        'pdf':['pdfplumber', 'requests'],       # Required by cdeacf.ca scraper to parse full PDFs job description files
+    
     },
     classifiers=[
         "Programming Language :: Python :: 3",
