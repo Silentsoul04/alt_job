@@ -1,6 +1,6 @@
 import urllib.parse
+import time
 from bs4 import BeautifulSoup
-# from scrapy.http import Request
 from .base import Scraper
 from ..items import Job
 
@@ -63,6 +63,7 @@ class Scraper_charityvillage_com(Scraper):
             next_buttons=response.request.meta['driver'].find_elements_by_xpath('//*[@id="cl-jobsearch-results-list"]/div/div[2]/ul/li[last()]/a')
             if len(next_buttons)>0 :
                 response.request.meta['driver'].execute_script("arguments[0].click();", next_buttons[0])
+                time.sleep(3)
             return response.request.meta['driver'].current_url
         else:
             return None

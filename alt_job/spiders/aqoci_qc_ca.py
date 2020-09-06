@@ -29,7 +29,7 @@ class Scraper_aqoci_qc_ca(Scraper):
         """
         @auto_url aqoci.qc.ca
         @returns items 1
-        @scrape_not_none url title
+        @scrape_not_none url title organisation apply_before location
         """
         return super().parse(response)
 
@@ -53,10 +53,10 @@ class Scraper_aqoci_qc_ca(Scraper):
     def parse_full_job_page(self, response, job_dict):
         """
         @auto_job_url aqoci.qc.ca
-        @scrape_not_none url title job_type description
+        @scrape_not_none url title organisation apply_before location
         @returns items 1 1  
         """
-        job_dict['description']=BeautifulSoup(response.xpath(JOB_PAGE_DESCRIPTION).get()).get_text() if response.xpath(JOB_PAGE_DESCRIPTION).get() else ""
+        job_dict['description']=BeautifulSoup(response.xpath(JOB_PAGE_DESCRIPTION).get()).get_text() if response.xpath(JOB_PAGE_DESCRIPTION).get() else None
         job_dict['job_type']=response.xpath(JOB_PAGE_TYPE).get()
         return Job(job_dict)
 
